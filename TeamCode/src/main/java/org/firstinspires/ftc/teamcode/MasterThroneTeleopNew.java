@@ -5,49 +5,46 @@
  import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  import com.qualcomm.robotcore.hardware.DcMotor;
  import com.qualcomm.robotcore.hardware.Servo;
-@TeleOp
+@TeleOp(name = "MasterThroneTeleopNew")
 public class MasterThroneTeleopNew extends OpMode {
 
     DcMotor motorFrontRight;
     DcMotor motorFrontLeft;
     DcMotor motorBackRight;
     DcMotor motorBackLeft;
-    DcMotor launchR;
-    DcMotor launchL;
-
-    Servo catcherL;
-     Servo catcherR;
-    Servo buttonBasherL;
-     Servo buttonBasherR;
+    DcMotor motorForklift;
+    DcMotor motorBigSlide;
+//
+    Servo antlerLeft;
+    Servo antlerRight;
+    Servo smallSlide;
+    Servo jewelLower;
+    Servo jewelKnocker;
     public MasterThroneTeleopNew() {
     }
 
     @Override
     public void init() {
         //this is where we define all of the motors on the robot.
-        motorFrontRight = hardwareMap.dcMotor.get("motor_1");
-        motorBackRight = hardwareMap.dcMotor.get("motor_2");
-        motorFrontLeft = hardwareMap.dcMotor.get("motor_3");
-        motorBackLeft = hardwareMap.dcMotor.get("motor_4");
-        launchR = hardwareMap.dcMotor.get("motor_5");
-        launchL = hardwareMap.dcMotor.get("motor_6");
-        catcherL = hardwareMap.servo.get("servo_1");
-        catcherR = hardwareMap.servo.get("servo_2");
-        buttonBasherL = hardwareMap.servo.get("servo_3");
-        buttonBasherR = hardwareMap.servo.get("servo_4");
-        // pushl = hardwareMap.servo.get("servo_3");
-        //pushr = hardwareMap.servo.get("servo_4");
+        motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
+        motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
+        motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
+        motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
+        motorForklift = hardwareMap.dcMotor.get("motorForklift");
+        motorBigSlide = hardwareMap.dcMotor.get("motorBigSlide");
+        smallSlide = hardwareMap.servo.get("smallSlide");
+        antlerLeft = hardwareMap.servo.get("antlerLeft");
+        antlerRight = hardwareMap.servo.get("antlerRight");
+        jewelLower = hardwareMap.servo.get("jewelLower");
+        jewelKnocker = hardwareMap.servo.get("jewelKnocker");
 
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        launchL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        launchR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        catcherL.setPosition(.5);
-        catcherR.setPosition(.5);
-        buttonBasherR.setPosition(0.8);
-        buttonBasherL.setPosition(1);
+//        launchL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        launchR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
 
     }
@@ -62,10 +59,7 @@ public class MasterThroneTeleopNew extends OpMode {
      double r;
      @Override
     public void loop() {
-        //Control method #2 Joysticks
-         //boolean aCurr = gamepad2.a;
-
-         l = Math.abs(gamepad1.left_stick_x) + Math.abs(gamepad1.left_stick_y);
+           l = Math.abs(gamepad1.left_stick_x) + Math.abs(gamepad1.left_stick_y);
           r = Math.abs(gamepad1.right_stick_x) + Math.abs(gamepad1.right_stick_y);
          telemetry.addData("leftstick", l);
          telemetry.addData("rightstick", r);
@@ -86,47 +80,48 @@ public class MasterThroneTeleopNew extends OpMode {
         motorBackRight.setPower(n);
         motorFrontLeft.setPower(m);
         motorBackLeft.setPower(m);
-        if (gamepad2.a) {
-            launchL.setPower(1);
-            launchR.setPower(-1);
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            catcherL.setPosition(1);
-            catcherR.setPosition(0 );
-        }
-         if (gamepad2.y) {
-             launchL.setPower(0);
-             launchR.setPower(0);
-             catcherL.setPosition(.3);
-             catcherR.setPosition(.7);
-             //ButtonState = 1;
-         }
          if (gamepad2.x) {
-             launchL.setPower(0);
-             launchR.setPower(0);
-             catcherL.setPosition(1);
-             catcherR.setPosition(0);
+             antlerLeft.setPosition(0.9);
+             antlerRight.setPosition(0.1);
+             try {
+                 Thread.sleep(500);
+             } catch (InterruptedException e) {
+                 e.printStackTrace();
+             }
+         } else {
+             antlerLeft.setPosition(0.5);
+             antlerRight.setPosition(0.5);
          }
-         if(gamepad2.b) {
-             catcherL.setPosition(.5);
-             catcherR.setPosition(.5);
-             launchL.setPower(0);
-             launchR.setPower(0);
+         if (gamepad2.a) {
+             antlerLeft.setPosition(0.1);
+             antlerRight.setPosition(0.9);
+             try {
+                 Thread.sleep(500);
+             } catch (InterruptedException e) {
+                 e.printStackTrace();
+             }
+         } else {
+             antlerLeft.setPosition(0);
+             antlerRight.setPosition(0);
          }
-         if(gamepad2.dpad_up) {
-             buttonBasherL.setPosition(0.9);
+         if (gamepad2.dpad_left) {
+             motorBigSlide.setPower(0.5);
+         } else if(gamepad2.dpad_right) {
+             motorBigSlide.setPower(-0.5);
+         } else {
+             motorBigSlide.setPower(0);
          }
-         if(gamepad2.dpad_down) {
-             buttonBasherL.setPosition(0);
+         if (gamepad2.dpad_up) {
+             smallSlide.setPosition(0.7);
+         } else if(gamepad2.dpad_down) {
+             smallSlide.setPosition(0.3);
+         } else {
+             smallSlide.setPosition(0.5);
          }
-         if(gamepad2.dpad_left) {
-             buttonBasherR.setPosition(0.8);
-         }
-         if(gamepad2.dpad_right) {
-             buttonBasherR.setPosition(0.2);
+         if (gamepad2.y) {
+             jewelKnocker.setPosition(0.1);
+         } else if (gamepad2.b) {
+             jewelKnocker.setPosition(0.9);
          }
     }
 }

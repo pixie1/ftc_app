@@ -57,7 +57,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 @Autonomous
 public class MasterAutoBeaconTiltBlue extends LinearOpMode {
-    EncoderMoveUtil encoderMoveUtil;
+    //EncoderMoveUtil encoderMoveUtil;
 
     DcMotor motorFrontRight;
     DcMotor motorFrontLeft;
@@ -104,15 +104,15 @@ public class MasterAutoBeaconTiltBlue extends LinearOpMode {
         telemetry.addData("Initialization done", "0");
         telemetry.update();
 
-        encoderMoveUtil = new EncoderMoveUtil(motorFrontRight, motorBackLeft, motorBackRight, motorFrontLeft,
-                telemetry, sensorGyro);
+        //encoderMoveUtil = new EncoderMoveUtil(motorFrontRight, motorBackLeft, motorBackRight, motorFrontLeft,
+        //        telemetry, sensorGyro);
 
         colorSensor.enableLed(false);
         lightSensor.enableLed(true);
 
         waitForStart();
 
-        encoderMoveUtil.backward(100 - RBL, 0.3);
+        //encoderMoveUtil.backward(100 - RBL, 0.3);
         lineLookTime.reset();
 
         while (lightSensor.getLightDetected() < MATLIGHT && lineLookTime.seconds() < 10) {
@@ -128,11 +128,11 @@ public class MasterAutoBeaconTiltBlue extends LinearOpMode {
         motorBackRight.setPower(0);
         motorFrontLeft.setPower(0);
         motorFrontRight.setPower(0);
-        encoderMoveUtil.forward(10, 0.25);
+        //encoderMoveUtil.forward(10, 0.25);
         int gyroTurn2 = 45 - sensorGyro.getIntegratedZValue();
         telemetry.addData("Z VAL", sensorGyro.getIntegratedZValue());
         telemetry.addData("GYROTURN", gyroTurn2);
-        encoderMoveUtil.turnGyroPrecise(gyroTurn2, 0.2);
+        //encoderMoveUtil.turnGyroPrecise(gyroTurn2, 0.2);
         //while (rangeSensor.cmUltrasonic() < 30 && rangeSensor.cmUltrasonic() > 5) {// && rangeSensor.cmUltrasonic() < 100) {
         //        motorFrontLeft.setPower(0.1);
         //        motorFrontRight.setPower(0.1);

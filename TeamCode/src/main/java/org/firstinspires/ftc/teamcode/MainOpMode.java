@@ -16,12 +16,14 @@ public class MainOpMode extends LinearOpMode {
     DcMotor motorFrontLeft;
     DcMotor motorBackRight;
     DcMotor motorBackLeft;
-    DcMotor launchR;
-    DcMotor launchL;
-    Servo buttonbashL;
-    Servo buttonbashR;
-    Servo catcherL;
-    Servo catcherR;
+    DcMotor motorForklift;
+    DcMotor motorBigSlide;
+
+    Servo antlerLeft;
+    Servo antlerRight;
+    Servo smallSlide;
+    Servo jewelLower;
+    Servo jewelKnocker;
 
     ModernRoboticsI2cGyro sensorGyro;
     ColorSensor colorSensor;
@@ -31,10 +33,7 @@ public class MainOpMode extends LinearOpMode {
 
     //EncoderUtilVars
     ElapsedTime lineLookTime = new ElapsedTime();
-    final int RBL = 26;
-    final double MATLIGHT = 0.7;
     final int ENCODER_TICKS_NEVEREST= 1120;
-    //final int ENCODER_TICKS_TETRIX= 1440;
     final double INCH_TO_CM= 2.54;
     final int WHEEL_DIAMETER=4; //in inches
     //VarsDone
@@ -42,49 +41,30 @@ public class MainOpMode extends LinearOpMode {
     public MainOpMode() {
     }
     public void initAll() {
-        motorFrontRight = hardwareMap.dcMotor.get("motor_1");
-        motorBackRight = hardwareMap.dcMotor.get("motor_2");
-        motorFrontLeft = hardwareMap.dcMotor.get("motor_3");
-        motorBackLeft = hardwareMap.dcMotor.get("motor_4");
-        launchR = hardwareMap.dcMotor.get("motor_5");
-        launchL = hardwareMap.dcMotor.get("motor_6");
+        motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
+        motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
+        motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
+        motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
+        motorForklift = hardwareMap.dcMotor.get("motorForklift");
+        motorBigSlide = hardwareMap.dcMotor.get("motorBigSlide");
 
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        smallSlide = hardwareMap.servo.get("smallSlide");
+        antlerLeft = hardwareMap.servo.get("antlerLeft");
+        antlerRight = hardwareMap.servo.get("antlerRight");
+        jewelLower = hardwareMap.servo.get("jewelLower");
+        jewelKnocker = hardwareMap.servo.get("jewelKnocker");
+        colorSensor = hardwareMap.colorSensor.get("colorSensor");
 
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        //buttonbashL = hardwareMap.servo.get("servo_3");
-        //buttonbashR = hardwareMap.servo.get("servo_4");
-        catcherL = hardwareMap.servo.get("servo_1");
-        catcherR = hardwareMap.servo.get("servo_2");
-
-        //lightSensor = hardwareMap.opticalDistanceSensor.get("light_sensor");
-        //sensorGyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("gyro");
-        //rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range");
-        //colorSensor = hardwareMap.colorSensor.get("sensor_color");
-
-        //buttonbashL.setPosition(0);
-        //buttonbashR.setPosition(0.7);
-        catcherL.setPosition(0.5);
-        catcherR.setPosition(0.5);
-
-        //sensorGyro.calibrate();
-        //while (sensorGyro.isCalibrating()) {
-        //    telemetry.addData("gyro sensor is calibrating", "0");
-        //    telemetry.update();
-        //}
         telemetry.addData("Initialization done", "0");
         telemetry.update();
 
-        //colorSensor.enableLed(false);
+        colorSensor.enableLed(false);
         //lightSensor.enableLed(true);
     }
     public int cmToEncoderTicks(double cm) {
@@ -280,6 +260,48 @@ public class MainOpMode extends LinearOpMode {
 
         telemetry.addData("TurnDone", 0);
         telemetry.update();
+    }
+    public void OpenAntlers(){
+        antlerLeft.setPosition(0.5);//TODO tune value
+        antlerRight.setPosition(0.5);//TODO tune value
+    }
+    public void CloseAntlers(){
+        antlerLeft.setPosition(0.5);//TODO tune value
+        antlerRight.setPosition(0.5);//TODO tune value
+    }
+    public void CloseAntlersAll(){
+        antlerLeft.setPosition(0.5);//TODO tune value
+        antlerRight.setPosition(0.5);//TODO tune value
+    }
+    public void JewelGlyphParkAuto(int color) {
+        CloseAntlers();
+        jewelLower.setPosition(0.5);//TODO tune value so jewel lowerer goes in between balls
+        telemetry.addData("blue",colorSensor.blue());
+        if(color==1){//THIS ONE IS FOR THE RED SIDE
+            /*if(colorSensor.blue>=2) {
+            jewelKnocker.setPosition(0.5);//TODO tune value to hit ball correctly
+            }else{
+            jewelKnocker.setPosition(0.5);//TODO tune value to hit ball correctly
+            }*/
+        }else{//THIS ONE IS FOR THE BLUE SIDE
+            /*if(colorSensor.blue>=2) {
+            jewelKnocker.setPosition(0.5);//TODO tune value to hit ball correctly
+            }else{
+            jewelKnocker.setPosition(0.5);//TODO tune value to hit ball correctly
+            }*/
+        }
+        jewelLower.setPosition(0.5);//TODO tune value so jewel lowerer goes back
+        if(color==1){//REDPOSITION1 BLUEPOSITION2
+            backward(60,0.5);
+        }else{//REDPOSITION2 BLUEPOSITION1
+            forward(60,0.5);
+        }
+        turnGyroPrecise(-90*color,0.25);
+        OpenAntlers();
+        forward(5,0.5);
+        CloseAntlersAll();//maybe different function for all the way closed
+        backward(10,0.5);
+        stopMotors();
     }
     @Override
     public void runOpMode() {
