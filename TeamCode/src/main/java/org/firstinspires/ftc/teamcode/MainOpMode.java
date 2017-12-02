@@ -22,7 +22,6 @@ public class MainOpMode extends LinearOpMode {
     Servo antlerLeft;
     Servo antlerRight;
     Servo smallSlide;
-    Servo jewelLower;
     Servo jewelKnocker;
 
     ModernRoboticsI2cGyro sensorGyro;
@@ -35,7 +34,7 @@ public class MainOpMode extends LinearOpMode {
     ElapsedTime lineLookTime = new ElapsedTime();
     final int ENCODER_TICKS_NEVEREST= 1120;
     final double INCH_TO_CM= 2.54;
-    final int WHEEL_DIAMETER=4; //in inches
+    final int WHEEL_DIAMETER=4/2; //in inches
     //VarsDone
 
     public MainOpMode() {
@@ -51,7 +50,6 @@ public class MainOpMode extends LinearOpMode {
         smallSlide = hardwareMap.servo.get("smallSlide");
         antlerLeft = hardwareMap.servo.get("antlerLeft");
         antlerRight = hardwareMap.servo.get("antlerRight");
-        jewelLower = hardwareMap.servo.get("jewelLower");
         jewelKnocker = hardwareMap.servo.get("jewelKnocker");
         colorSensor = hardwareMap.colorSensor.get("colorSensor");
 
@@ -262,35 +260,58 @@ public class MainOpMode extends LinearOpMode {
         telemetry.update();
     }
     public void OpenAntlers(){
-        antlerLeft.setPosition(0.5);//TODO tune value
-        antlerRight.setPosition(0.5);//TODO tune value
+        antlerLeft.setPosition(0);
+        antlerRight.setPosition(1);
     }
     public void CloseAntlers(){
-        antlerLeft.setPosition(0.5);//TODO tune value
-        antlerRight.setPosition(0.5);//TODO tune value
+        antlerLeft.setPosition(1);
+        antlerRight.setPosition(0);
     }
-    public void CloseAntlersAll(){
-        antlerLeft.setPosition(0.5);//TODO tune value
-        antlerRight.setPosition(0.5);//TODO tune value
-    }
+    /*public void CloseAntlersAll(){
+        antlerLeft.setPosition(1);//TODO tune value
+        antlerRight.setPosition(0);//TODO tune value
+    }*/
     public void JewelGlyphParkAuto(int color) {
         CloseAntlers();
-        jewelLower.setPosition(0.5);//TODO tune value so jewel lowerer goes in between balls
-        telemetry.addData("blue",colorSensor.blue());
-        if(color==1){//THIS ONE IS FOR THE RED SIDE
-            /*if(colorSensor.blue>=2) {
-            jewelKnocker.setPosition(0.5);//TODO tune value to hit ball correctly
-            }else{
-            jewelKnocker.setPosition(0.5);//TODO tune value to hit ball correctly
-            }*/
-        }else{//THIS ONE IS FOR THE BLUE SIDE
-            /*if(colorSensor.blue>=2) {
-            jewelKnocker.setPosition(0.5);//TODO tune value to hit ball correctly
-            }else{
-            jewelKnocker.setPosition(0.5);//TODO tune value to hit ball correctly
-            }*/
+        motorBigSlide.setPower(-0.5);//TODO adjust values
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        jewelLower.setPosition(0.5);//TODO tune value so jewel lowerer goes back
+        motorBigSlide.setPower(0);
+        jewelKnocker.setPosition(1);//TODO tune value so jewel lowerer goes in between balls
+        motorBigSlide.setPower(0.5);//TODO adjust values
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        motorBigSlide.setPower(0);
+
+        //telemetry.addData("blue",colorSensor.blue());
+        /*if(color==1){//THIS ONE IS FOR THE RED SIDE
+            if(colorSensor.blue()>=1) {
+            smallSlide.setPosition(0.6);//TODO reverse if necessary
+            }else{
+            smallSlide.setPosition(0.4);//TODO reverse if necessary
+            }
+        }else{//THIS ONE IS FOR THE BLUE SIDE
+            if(colorSensor.blue()>=1) {
+            smallSlide.setPosition(0.4);//TODO reverse if necessary
+            }else{
+            smallSlide.setPosition(0.6);//TODO reverse if necessary
+            }
+        }
+        */
+        jewelKnocker.setPosition(0);//TODO tune value so jewel lowerer goes back
+        motorForklift.setPower(0.50);//TODO adjust value
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        motorForklift.setPower(0);
         if(color==1){//REDPOSITION1 BLUEPOSITION2
             backward(60,0.5);
         }else{//REDPOSITION2 BLUEPOSITION1
@@ -298,9 +319,9 @@ public class MainOpMode extends LinearOpMode {
         }
         turnGyroPrecise(-90*color,0.25);
         OpenAntlers();
-        forward(5,0.5);
-        CloseAntlersAll();//maybe different function for all the way closed
-        backward(10,0.5);
+        forward(5,0.25);
+        CloseAntlers();//maybe different function for all the way closed
+        backward(10,0.25);
         stopMotors();
     }
     @Override

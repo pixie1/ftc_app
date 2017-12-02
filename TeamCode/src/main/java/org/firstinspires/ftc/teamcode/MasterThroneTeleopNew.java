@@ -18,7 +18,6 @@ public class MasterThroneTeleopNew extends OpMode {
     Servo antlerLeft;
     Servo antlerRight;
     Servo smallSlide;
-    Servo jewelLower;
     Servo jewelKnocker;
     public MasterThroneTeleopNew() {
     }
@@ -35,18 +34,12 @@ public class MasterThroneTeleopNew extends OpMode {
         smallSlide = hardwareMap.servo.get("smallSlide");
         antlerLeft = hardwareMap.servo.get("antlerLeft");
         antlerRight = hardwareMap.servo.get("antlerRight");
-        jewelLower = hardwareMap.servo.get("jewelLower");
         jewelKnocker = hardwareMap.servo.get("jewelKnocker");
 
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        launchL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        launchR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
-
     }
      //int ButtonState = 0;
      //boolean toggleA = false;
@@ -55,73 +48,94 @@ public class MasterThroneTeleopNew extends OpMode {
      //boolean aPrevStat = false;
      double n;
      double m;
-     double l;
-     double r;
+     double leftValue;
+     double rightValue;
+    double sc = 1;
+    int fc = 1;
      @Override
     public void loop() {
-           l = Math.abs(gamepad1.left_stick_x) + Math.abs(gamepad1.left_stick_y);
-          r = Math.abs(gamepad1.right_stick_x) + Math.abs(gamepad1.right_stick_y);
-         telemetry.addData("leftstick", l);
-         telemetry.addData("rightstick", r);
-         if(r>=l){
-             n = ((gamepad1.right_stick_x + gamepad1.right_stick_y))*.2;
-             m = (-(gamepad1.right_stick_y - gamepad1.right_stick_x))*.2;
+           leftValue = Math.abs(gamepad1.left_stick_x) + Math.abs(gamepad1.left_stick_y);
+          rightValue = Math.abs(gamepad1.right_stick_x) + Math.abs(gamepad1.right_stick_y);
+         telemetry.addData("leftstick", leftValue);
+         telemetry.addData("rightstick", rightValue);
+         if(rightValue >= leftValue){
+             n = -(((gamepad1.right_stick_x + gamepad1.right_stick_y))*.3);
+             m = -((-(gamepad1.right_stick_y - gamepad1.right_stick_x))*.3);
              telemetry.addData("n (rightspeed)", n);
              telemetry.addData("m (leftspeed", m);
-         } if(l>r){
-            n = ((gamepad1.left_stick_x + gamepad1.left_stick_y))/.8;
-             m = (-(gamepad1.left_stick_y - gamepad1.left_stick_x))/.8;
+         } if(leftValue > rightValue){
+            n = -(((gamepad1.left_stick_x + gamepad1.left_stick_y))/.8);
+             m = -((-(gamepad1.left_stick_y - gamepad1.left_stick_x))/.8);
              telemetry.addData("n (rightspeed)", n);
              telemetry.addData("m (leftspeed", m);
          }
-
-
-        motorFrontRight.setPower(n);
-        motorBackRight.setPower(n);
-        motorFrontLeft.setPower(m);
-        motorBackLeft.setPower(m);
-         if (gamepad2.x) {
-             antlerLeft.setPosition(0.9);
-             antlerRight.setPosition(0.1);
-             try {
-                 Thread.sleep(500);
-             } catch (InterruptedException e) {
-                 e.printStackTrace();
-             }
-         } else {
-             antlerLeft.setPosition(0.5);
-             antlerRight.setPosition(0.5);
+         if (gamepad1.x) {
+            sc = 1;
+             telemetry.addData("sc", sc);
          }
-         if (gamepad2.a) {
-             antlerLeft.setPosition(0.1);
-             antlerRight.setPosition(0.9);
-             try {
-                 Thread.sleep(500);
-             } catch (InterruptedException e) {
-                 e.printStackTrace();
-             }
-         } else {
+         if (gamepad1.a) {
+             sc = 0.5;
+             telemetry.addData("sc", sc);
+         }
+         if (gamepad1.y) {
+             sc = 0.1;
+             telemetry.addData("sc", sc);
+         }
+
+        motorFrontRight.setPower(n*sc);
+        motorBackRight.setPower(n*sc);
+        motorFrontLeft.setPower(m*sc);
+        motorBackLeft.setPower(m*sc);
+         if (gamepad2.x) { //closing left
              antlerLeft.setPosition(0);
-             antlerRight.setPosition(0);
+             antlerRight.setPosition(1);
+             try {
+                 Thread.sleep(250);
+             } catch (InterruptedException e) {
+                 e.printStackTrace();
+             }
+             motorForklift.setPower(0.75);
+             try {
+                 Thread.sleep(500);
+             } catch (InterruptedException e) {
+                 e.printStackTrace();
+             }
+
+             motorForklift.setPower(0);
          }
-         if (gamepad2.dpad_left) {
+         if (gamepad2.a) { //opening left
+             antlerLeft.setPosition(0.3);
+             antlerRight.setPosition(0.7);
+         }
+         if (gamepad2.dpad_left) { //
              motorBigSlide.setPower(0.5);
          } else if(gamepad2.dpad_right) {
              motorBigSlide.setPower(-0.5);
          } else {
              motorBigSlide.setPower(0);
          }
-         if (gamepad2.dpad_up) {
+         if (gamepad2.dpad_up) { //not working
              smallSlide.setPosition(0.7);
          } else if(gamepad2.dpad_down) {
              smallSlide.setPosition(0.3);
          } else {
              smallSlide.setPosition(0.5);
          }
-         if (gamepad2.y) {
-             jewelKnocker.setPosition(0.1);
-         } else if (gamepad2.b) {
-             jewelKnocker.setPosition(0.9);
+         if (gamepad2.left_bumper) {
+             jewelKnocker.setPosition(0);
          }
-    }
+         if (Math.abs(motorForklift.getCurrentPosition())>=6736) {
+             fc=0;
+         } else {
+             fc=1;
+         }
+         if (gamepad2.right_bumper) {
+             motorForklift.setPower(0.75*fc);
+         } else if (gamepad2.right_trigger>0) {
+             motorForklift.setPower(-0.75*fc);
+         } else {
+             motorForklift.setPower(0);
+         }
+         telemetry.addData("Forklift Encoder", motorForklift.getCurrentPosition());
+   }
 }
