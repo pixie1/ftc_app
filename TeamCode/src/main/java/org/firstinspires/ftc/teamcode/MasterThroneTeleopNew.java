@@ -86,9 +86,9 @@ public class MasterThroneTeleopNew extends OpMode {
         motorBackRight.setPower(n*sc);
         motorFrontLeft.setPower(m*sc);
         motorBackLeft.setPower(m*sc);
-         if (gamepad2.x) { //closing left
-             antlerLeft.setPosition(0.3);
-             antlerRight.setPosition(0);
+         if (gamepad2.a) { //closing left
+             antlerLeft.setPosition(0);
+             antlerRight.setPosition(0.3);
              try {
                  Thread.sleep(250);
              } catch (InterruptedException e) {
@@ -103,9 +103,9 @@ public class MasterThroneTeleopNew extends OpMode {
 
              motorForklift.setPower(0);
          }
-         if (gamepad2.a) { //opening left
-             antlerLeft.setPosition(0);
-             antlerRight.setPosition(0.4);
+         if (gamepad2.x) { //opening left
+             antlerLeft.setPosition(0.4);
+             antlerRight.setPosition(0);
          }
          if (gamepad2.dpad_left) { //
              motorBigSlide.setPower(0.75);
@@ -122,11 +122,11 @@ public class MasterThroneTeleopNew extends OpMode {
          if (gamepad2.left_trigger>0){
              jewelKnocker.setPosition(0);
          }
-         if (Math.abs(motorForklift.getCurrentPosition())>=6736) {
+         /*if (Math.abs(motorForklift.getCurrentPosition())>=6736) {
              fc=0;
          } else {
              fc=1;
-         }
+         }*/
          if (gamepad2.right_bumper) {
              motorForklift.setPower(0.75*fc);
          } else if (gamepad2.right_trigger>0) {

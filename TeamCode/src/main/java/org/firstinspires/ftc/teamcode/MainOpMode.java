@@ -57,10 +57,13 @@ public class MainOpMode extends LinearOpMode {
         colorSensor = hardwareMap.colorSensor.get("colorSensor");
         sensorGyro= (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("sensorGyro");
 
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         telemetry.addData("Initialization done", "0");
         telemetry.update();
@@ -94,10 +97,10 @@ public class MainOpMode extends LinearOpMode {
         telemetry.addData("currentEncoderValue", current);
         telemetry.addData("disInEncoderTicks", disInEncoderTicks);
         telemetry.update();
-        motorFrontLeft.setPower(-speed);
-        motorFrontRight.setPower(-speed);
-        motorBackLeft.setPower(-speed);
-        motorBackRight.setPower(-speed);
+        motorFrontLeft.setPower(speed);
+        motorFrontRight.setPower(speed);
+        motorBackLeft.setPower(speed);
+        motorBackRight.setPower(speed);
         while (Math.abs(Math.abs(motorFrontRight.getCurrentPosition())-Math.abs(current)) < Math.abs(disInEncoderTicks)) {
             telemetry.addData("Centimeters:", disInCm);
             telemetry.addData("Encoder Ticks:", disInEncoderTicks);
@@ -116,10 +119,10 @@ public class MainOpMode extends LinearOpMode {
     public void backward(double disInCm, double speed) {
         int current = motorFrontRight.getCurrentPosition();
         int disInEncoderTicks = cmToEncoderTicks(disInCm);
-        motorFrontLeft.setPower(speed);
-        motorFrontRight.setPower(speed);
-        motorBackLeft.setPower(speed);
-        motorBackRight.setPower(speed);
+        motorFrontLeft.setPower(-speed);
+        motorFrontRight.setPower(-speed);
+        motorBackLeft.setPower(-speed);
+        motorBackRight.setPower(-speed);
         while (Math.abs(Math.abs(motorFrontRight.getCurrentPosition())-Math.abs(current)) < Math.abs(disInEncoderTicks)) {
             telemetry.addData("Centimeters:", disInCm);
             telemetry.addData("Encoder Ticks:", disInEncoderTicks);
@@ -263,12 +266,28 @@ public class MainOpMode extends LinearOpMode {
         telemetry.update();
     }
     public void OpenAntlers(){
-        antlerLeft.setPosition(1);
-        antlerRight.setPosition(0);
+        antlerLeft.setPosition(0);
+        antlerRight.setPosition(0.4);
     }
     public void CloseAntlers(){
-        antlerLeft.setPosition(0);
-        antlerRight.setPosition(1);
+        antlerLeft.setPosition(0.3);
+        antlerRight.setPosition(0);
+    }
+    public void Diagnostics(){
+        //telemetry.addData("Front Left Encoder", motorFrontLeft.getCurrentPosition());
+        //telemetry.addData("Front Right Encoder", motorFrontRight.getCurrentPosition());
+        //telemetry.addData("Back Left Encoder", motorBackLeft.getCurrentPosition());
+        //telemetry.addData("Back Right Encoder", motorBackRight.getCurrentPosition());
+        //telemetry.addData("Forklift Encoder", motorForklift.getCurrentPosition());
+        //telemetry.addData("Big Slide Encoder", motorBigSlide.getCurrentPosition());
+        telemetry.addData("blue",colorSensor.blue());
+        telemetry.addData("red",colorSensor.red());
+        telemetry.update();
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
     /*public void CloseAntlersAll(){
         antlerLeft.setPosition(1);//TODO tune value
@@ -276,38 +295,61 @@ public class MainOpMode extends LinearOpMode {
     }*/
     public void JewelGlyphParkAuto(int color) {
         CloseAntlers();
-        jewelKnocker.setPosition(1);//TODO tune value so jewel lowerer goes in between balls
-        motorBigSlide.setPower(0.5);//TODO adjust values
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        motorBigSlide.setPower(0);
         motorBigSlide.setPower(-0.5);//TODO adjust values
         try {
-            Thread.sleep(500);
+            Thread.sleep(800);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         motorBigSlide.setPower(0);
-
-        telemetry.addData("blue",colorSensor.blue());
+        jewelKnocker.setPosition(0.05);//TODO tune value so jewel lowerer goes in between balls
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        motorBigSlide.setPower(0.5);//TODO adjust values
+        try {
+            Thread.sleep(1600);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        motorBigSlide.setPower(0);
+        Diagnostics();
         if(color==1){//THIS ONE IS FOR THE RED SIDE
             if(colorSensor.red()>colorSensor.blue()&&colorSensor.red()>5) {
-            backward(8,0.15);//TODO reverse or adjust speed if necessary
+                telemetry.update();
+            forward(5,0.15);//TODO reverse or adjust speed if necessary
+                telemetry.update();
+            }else if(colorSensor.blue()>colorSensor.red()&&colorSensor.blue()>5){
+                telemetry.update();
+            backward(5,0.15);//TODO reverse or adjust speed if necessary
+                telemetry.update();
             }else{
-            forward(8,0.15);//TODO reverse or adjust speed if necessary
+                jewelKnocker.setPosition(1);
             }
         }else{//THIS ONE IS FOR THE BLUE SIDE
             if(colorSensor.blue()>colorSensor.red()&&colorSensor.blue()>5) {
-            forward(8,0.15);//TODO reverse or adjust speed if necessary
+                telemetry.update();
+            forward(5,0.15);//TODO reverse or adjust speed if necessary
+                telemetry.update();
+            }else if(colorSensor.red()>colorSensor.blue()&&colorSensor.red()>5){
+                telemetry.update();
+             backward(5,0.15);//TODO reverse or adjust speed if necessary
+                telemetry.update();
             }else{
-            backward(8,0.15);//TODO reverse or adjust speed if necessary
+                jewelKnocker.setPosition(1);
             }
         }
-
-        jewelKnocker.setPosition(0);//TODO tune value so jewel lowerer goes back
+        Diagnostics();
+        jewelKnocker.setPosition(1);//TODO tune value so jewel lowerer goes back
+        motorBigSlide.setPower(-0.5);//TODO adjust values
+        try {
+            Thread.sleep(1600);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        motorBigSlide.setPower(0);
         motorForklift.setPower(0.50);//TODO adjust value
         try {
             Thread.sleep(250);
@@ -315,17 +357,28 @@ public class MainOpMode extends LinearOpMode {
             e.printStackTrace();
         }
         motorForklift.setPower(0);
+        /*
         if(color==1){//REDPOSITION1 BLUEPOSITION2
             backward(60,0.5);
         }else{//REDPOSITION2 BLUEPOSITION1
             forward(60,0.5);
         }
+        Diagnostics();
+        motorBigSlide.setPower(-0.5);//TODO adjust values
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        motorBigSlide.setPower(0);
         turnGyroPrecise(-90*color,0.25);
         OpenAntlers();
         forward(5,0.25);
         CloseAntlers();//maybe different function for all the way closed
         backward(10,0.25);
         stopMotors();
+        Diagnostics();
+    */
     }
     @Override
     public void runOpMode() {
