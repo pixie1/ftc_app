@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryImpl;
 
 public class MainOpMode extends LinearOpMode {
     DcMotor motorFrontRight;
@@ -26,8 +27,8 @@ public class MainOpMode extends LinearOpMode {
 
     ModernRoboticsI2cGyro sensorGyro;
     ColorSensor colorSensor;
-    ModernRoboticsI2cRangeSensor rangeSensor;
-    OpticalDistanceSensor lightSensor;
+//    ModernRoboticsI2cRangeSensor rangeSensor;
+//    OpticalDistanceSensor lightSensor;
     public Telemetry telemetry;
 
     //EncoderUtilVars
@@ -40,6 +41,8 @@ public class MainOpMode extends LinearOpMode {
     public MainOpMode() {
     }
     public void initAll() {
+        telemetry= new TelemetryImpl(this);
+
         motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
         motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
@@ -52,7 +55,7 @@ public class MainOpMode extends LinearOpMode {
         antlerRight = hardwareMap.servo.get("antlerRight");
         jewelKnocker = hardwareMap.servo.get("jewelKnocker");
         colorSensor = hardwareMap.colorSensor.get("colorSensor");
-
+        sensorGyro= (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("sensorGyro");
 
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -62,7 +65,7 @@ public class MainOpMode extends LinearOpMode {
         telemetry.addData("Initialization done", "0");
         telemetry.update();
 
-        colorSensor.enableLed(false);
+        colorSensor.enableLed(true);
         //lightSensor.enableLed(true);
     }
     public int cmToEncoderTicks(double cm) {
@@ -260,12 +263,12 @@ public class MainOpMode extends LinearOpMode {
         telemetry.update();
     }
     public void OpenAntlers(){
-        antlerLeft.setPosition(0);
-        antlerRight.setPosition(1);
-    }
-    public void CloseAntlers(){
         antlerLeft.setPosition(1);
         antlerRight.setPosition(0);
+    }
+    public void CloseAntlers(){
+        antlerLeft.setPosition(0);
+        antlerRight.setPosition(1);
     }
     /*public void CloseAntlersAll(){
         antlerLeft.setPosition(1);//TODO tune value
@@ -273,13 +276,6 @@ public class MainOpMode extends LinearOpMode {
     }*/
     public void JewelGlyphParkAuto(int color) {
         CloseAntlers();
-        motorBigSlide.setPower(-0.5);//TODO adjust values
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        motorBigSlide.setPower(0);
         jewelKnocker.setPosition(1);//TODO tune value so jewel lowerer goes in between balls
         motorBigSlide.setPower(0.5);//TODO adjust values
         try {
@@ -288,22 +284,29 @@ public class MainOpMode extends LinearOpMode {
             e.printStackTrace();
         }
         motorBigSlide.setPower(0);
+        motorBigSlide.setPower(-0.5);//TODO adjust values
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        motorBigSlide.setPower(0);
 
-        //telemetry.addData("blue",colorSensor.blue());
-        /*if(color==1){//THIS ONE IS FOR THE RED SIDE
-            if(colorSensor.blue()>=1) {
-            smallSlide.setPosition(0.6);//TODO reverse if necessary
+        telemetry.addData("blue",colorSensor.blue());
+        if(color==1){//THIS ONE IS FOR THE RED SIDE
+            if(colorSensor.red()>colorSensor.blue()&&colorSensor.red()>5) {
+            backward(8,0.15);//TODO reverse or adjust speed if necessary
             }else{
-            smallSlide.setPosition(0.4);//TODO reverse if necessary
+            forward(8,0.15);//TODO reverse or adjust speed if necessary
             }
         }else{//THIS ONE IS FOR THE BLUE SIDE
-            if(colorSensor.blue()>=1) {
-            smallSlide.setPosition(0.4);//TODO reverse if necessary
+            if(colorSensor.blue()>colorSensor.red()&&colorSensor.blue()>5) {
+            forward(8,0.15);//TODO reverse or adjust speed if necessary
             }else{
-            smallSlide.setPosition(0.6);//TODO reverse if necessary
+            backward(8,0.15);//TODO reverse or adjust speed if necessary
             }
         }
-        */
+
         jewelKnocker.setPosition(0);//TODO tune value so jewel lowerer goes back
         motorForklift.setPower(0.50);//TODO adjust value
         try {

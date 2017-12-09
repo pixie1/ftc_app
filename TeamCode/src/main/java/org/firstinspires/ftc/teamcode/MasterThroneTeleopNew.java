@@ -31,7 +31,7 @@ public class MasterThroneTeleopNew extends OpMode {
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         motorForklift = hardwareMap.dcMotor.get("motorForklift");
         motorBigSlide = hardwareMap.dcMotor.get("motorBigSlide");
-        smallSlide = hardwareMap.servo.get("smallSlide");
+
         antlerLeft = hardwareMap.servo.get("antlerLeft");
         antlerRight = hardwareMap.servo.get("antlerRight");
         jewelKnocker = hardwareMap.servo.get("jewelKnocker");
@@ -87,8 +87,8 @@ public class MasterThroneTeleopNew extends OpMode {
         motorFrontLeft.setPower(m*sc);
         motorBackLeft.setPower(m*sc);
          if (gamepad2.x) { //closing left
-             antlerLeft.setPosition(0);
-             antlerRight.setPosition(1);
+             antlerLeft.setPosition(0.3);
+             antlerRight.setPosition(0);
              try {
                  Thread.sleep(250);
              } catch (InterruptedException e) {
@@ -104,24 +104,22 @@ public class MasterThroneTeleopNew extends OpMode {
              motorForklift.setPower(0);
          }
          if (gamepad2.a) { //opening left
-             antlerLeft.setPosition(0.3);
-             antlerRight.setPosition(0.7);
+             antlerLeft.setPosition(0);
+             antlerRight.setPosition(0.4);
          }
          if (gamepad2.dpad_left) { //
-             motorBigSlide.setPower(0.5);
+             motorBigSlide.setPower(0.75);
          } else if(gamepad2.dpad_right) {
-             motorBigSlide.setPower(-0.5);
+             motorBigSlide.setPower(-0.75);
          } else {
              motorBigSlide.setPower(0);
          }
-         if (gamepad2.dpad_up) { //not working
-             smallSlide.setPosition(0.7);
-         } else if(gamepad2.dpad_down) {
-             smallSlide.setPosition(0.3);
-         } else {
-             smallSlide.setPosition(0.5);
-         }
+
          if (gamepad2.left_bumper) {
+             jewelKnocker.setPosition(1);
+         }
+
+         if (gamepad2.left_trigger>0){
              jewelKnocker.setPosition(0);
          }
          if (Math.abs(motorForklift.getCurrentPosition())>=6736) {

@@ -14,5 +14,6 @@ public class  FtcOpModeRegister implements OpModeRegister {
     manager.register("JewelGlyphParkAutoBluePerimeter", JewelGlyphParkAutoBluePerimeter.class);
       manager.register("TeleOpSimple", TeleOpSimple.class );
     manager.register("ColorCalibrate", ColorCalibrate.class);
+      manager.register("mainAutonomous", MainOpMode.class);
   }
 }
