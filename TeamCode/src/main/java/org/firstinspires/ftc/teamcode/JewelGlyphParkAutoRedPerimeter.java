@@ -7,7 +7,6 @@ public class JewelGlyphParkAutoRedPerimeter extends MainOpMode {
     public void runOpMode() {
         int color = 1; //1 for red -1 for blue
         initAll();
-        waitForStart();
        JewelGlyphParkAuto(color);
     }
 }

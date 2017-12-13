@@ -1,6 +1,5 @@
  package org.firstinspires.ftc.teamcode;
 
-
  import com.qualcomm.robotcore.eventloop.opmode.OpMode;
  import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,8 +16,8 @@ public class MasterThroneTeleopNew extends OpMode {
 //
     Servo antlerLeft;
     Servo antlerRight;
-    Servo smallSlide;
     Servo jewelKnocker;
+
     public MasterThroneTeleopNew() {
     }
 
@@ -41,11 +40,6 @@ public class MasterThroneTeleopNew extends OpMode {
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-     //int ButtonState = 0;
-     //boolean toggleA = false;
-     //boolean toggleDpadL = false;
-     //boolean toggleDpadR = false;
-     //boolean aPrevStat = false;
      double n;
      double m;
      double leftValue;
@@ -59,8 +53,8 @@ public class MasterThroneTeleopNew extends OpMode {
          telemetry.addData("leftstick", leftValue);
          telemetry.addData("rightstick", rightValue);
          if(rightValue >= leftValue){
-             n = -(((gamepad1.right_stick_x + gamepad1.right_stick_y))*.3);
-             m = -((-(gamepad1.right_stick_y - gamepad1.right_stick_x))*.3);
+             n = -(((gamepad1.right_stick_x + gamepad1.right_stick_y))*.4);
+             m = -((-(gamepad1.right_stick_y - gamepad1.right_stick_x))*.4);
              telemetry.addData("n (rightspeed)", n);
              telemetry.addData("m (leftspeed", m);
          } if(leftValue > rightValue){
@@ -82,10 +76,10 @@ public class MasterThroneTeleopNew extends OpMode {
              telemetry.addData("sc", sc);
          }
 
-        motorFrontRight.setPower(n*sc);
-        motorBackRight.setPower(n*sc);
-        motorFrontLeft.setPower(m*sc);
-        motorBackLeft.setPower(m*sc);
+        motorFrontRight.setPower(Math.min(n*sc,0.8));
+        motorBackRight.setPower(Math.min(n*sc,0.8));
+        motorFrontLeft.setPower(Math.min(m*sc,0.8));
+        motorBackLeft.setPower(Math.min(m*sc,0.8));
          if (gamepad2.a) { //closing left
              antlerLeft.setPosition(0);
              antlerRight.setPosition(0.3);
@@ -114,11 +108,9 @@ public class MasterThroneTeleopNew extends OpMode {
          } else {
              motorBigSlide.setPower(0);
          }
-
          if (gamepad2.left_bumper) {
              jewelKnocker.setPosition(1);
          }
-
          if (gamepad2.left_trigger>0){
              jewelKnocker.setPosition(0);
          }

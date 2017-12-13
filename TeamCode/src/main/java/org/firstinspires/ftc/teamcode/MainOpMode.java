@@ -65,11 +65,17 @@ public class MainOpMode extends LinearOpMode {
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        sensorGyro.calibrate();
+        while (sensorGyro.isCalibrating()) {
+            telemetry.addData("gyro sensor is calibrating", "0");
+            telemetry.update();
+        }
         telemetry.addData("Initialization done", "0");
         telemetry.update();
 
         colorSensor.enableLed(true);
-        //lightSensor.enableLed(true);
+        waitForStart();
+
     }
     public int cmToEncoderTicks(double cm) {
         double d = INCH_TO_CM * WHEEL_DIAMETER;
@@ -153,10 +159,10 @@ public class MainOpMode extends LinearOpMode {
                     right = false;
                     left = true;
                 }
-                motorBackLeft.setPower(speed);
-                motorBackRight.setPower(-speed);
-                motorFrontLeft.setPower(speed);
-                motorFrontRight.setPower(-speed);
+                motorBackLeft.setPower(-speed);
+                motorBackRight.setPower(speed);
+                motorFrontLeft.setPower(-speed);
+                motorFrontRight.setPower(speed);
                 telemetry.addData("HeadingCurrent", sensorGyro.getIntegratedZValue());
                 telemetry.addData("Target", targetRelativeHeading);
                 telemetry.update();
@@ -166,10 +172,10 @@ public class MainOpMode extends LinearOpMode {
                     left = false;
                     right = true;
                 }
-                motorBackLeft.setPower(-speed);
-                motorBackRight.setPower(speed);
-                motorFrontLeft.setPower(-speed);
-                motorFrontRight.setPower(speed);
+                motorBackLeft.setPower(speed);
+                motorBackRight.setPower(-speed);
+                motorFrontLeft.setPower(speed);
+                motorFrontRight.setPower(-speed);
                 telemetry.addData("HeadingCurrent", sensorGyro.getIntegratedZValue());
                 telemetry.addData("Target", targetRelativeHeading);
                 telemetry.update();
@@ -266,12 +272,17 @@ public class MainOpMode extends LinearOpMode {
         telemetry.update();
     }
     public void OpenAntlers(){
-        antlerLeft.setPosition(0);
-        antlerRight.setPosition(0.4);
+        antlerLeft.setPosition(0.4);
+        antlerRight.setPosition(0);
     }
     public void CloseAntlers(){
-        antlerLeft.setPosition(0.3);
-        antlerRight.setPosition(0);
+        antlerLeft.setPosition(0);
+        antlerRight.setPosition(0.3);
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
     public void Diagnostics(){
         //telemetry.addData("Front Left Encoder", motorFrontLeft.getCurrentPosition());
@@ -295,6 +306,13 @@ public class MainOpMode extends LinearOpMode {
     }*/
     public void JewelGlyphParkAuto(int color) {
         CloseAntlers();
+        motorForklift.setPower(0.50);//TODO adjust value
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        motorForklift.setPower(0);
         motorBigSlide.setPower(-0.5);//TODO adjust values
         try {
             Thread.sleep(800);
@@ -302,7 +320,7 @@ public class MainOpMode extends LinearOpMode {
             e.printStackTrace();
         }
         motorBigSlide.setPower(0);
-        jewelKnocker.setPosition(0.05);//TODO tune value so jewel lowerer goes in between balls
+        jewelKnocker.setPosition(0.07);//TODO tune value so jewel lowerer goes in between balls
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -315,70 +333,141 @@ public class MainOpMode extends LinearOpMode {
             e.printStackTrace();
         }
         motorBigSlide.setPower(0);
+        jewelKnocker.setPosition(0.01);
         Diagnostics();
+        int offset=0;
         if(color==1){//THIS ONE IS FOR THE RED SIDE
             if(colorSensor.red()>colorSensor.blue()&&colorSensor.red()>5) {
                 telemetry.update();
-            forward(5,0.15);//TODO reverse or adjust speed if necessary
+                forward(1,0.15);//TODO reverse or adjust speed if necessary
                 telemetry.update();
+                offset=5;
+                motorBigSlide.setPower(-0.5);//TODO adjust values
+                try {
+                    Thread.sleep(1600);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                jewelKnocker.setPosition(1);//TODO tune value so jewel lowerer goes back
+                motorBigSlide.setPower(0);
+                if(color==1){//REDPOSITION1 BLUEPOSITION2
+                    backward(20+offset,0.25);
+                }else{//REDPOSITION2 BLUEPOSITION1
+                    forward(20-offset,0.25);
+                }
             }else if(colorSensor.blue()>colorSensor.red()&&colorSensor.blue()>5){
                 telemetry.update();
-            backward(5,0.15);//TODO reverse or adjust speed if necessary
+                backward(1,0.15);//TODO reverse or adjust speed if necessary
                 telemetry.update();
+                offset=-5;
+                motorBigSlide.setPower(-0.5);//TODO adjust values
+                try {
+                    Thread.sleep(1600);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                jewelKnocker.setPosition(1);//TODO tune value so jewel lowerer goes back
+                motorBigSlide.setPower(0);
+                if(color==1){//REDPOSITION1 BLUEPOSITION2
+                    backward(25+offset,0.25);
+                }else{//REDPOSITION2 BLUEPOSITION1
+                    forward(25-offset,0.25);
+                }
             }else{
+                motorBigSlide.setPower(-.5);
+                try {
+                    Thread.sleep(1600);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                motorBigSlide.setPower(0);
                 jewelKnocker.setPosition(1);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if(color==1){//REDPOSITION1 BLUEPOSITION2
+                    backward(30+offset,0.25);
+                }else{//REDPOSITION2 BLUEPOSITION1
+                    forward(30-offset,0.25);
+                }
             }
         }else{//THIS ONE IS FOR THE BLUE SIDE
-            if(colorSensor.blue()>colorSensor.red()&&colorSensor.blue()>5) {
+            if(colorSensor.blue()>colorSensor.red()&&colorSensor.blue()>=5) {
                 telemetry.update();
-            forward(5,0.15);//TODO reverse or adjust speed if necessary
+                forward(1,0.15);//TODO reverse or adjust speed if necessary
                 telemetry.update();
-            }else if(colorSensor.red()>colorSensor.blue()&&colorSensor.red()>5){
+                offset=5;
+                motorBigSlide.setPower(-0.5);//TODO adjust values
+                try {
+                    Thread.sleep(1600);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                jewelKnocker.setPosition(1);//TODO tune value so jewel lowerer goes back
+                motorBigSlide.setPower(0);
+
+                if(color==1){//REDPOSITION1 BLUEPOSITION2
+                    backward(15+offset,0.25);//ADJUST
+                }else{//REDPOSITION2 BLUEPOSITION1
+                    forward(15-offset,0.25);//ADJUST
+                }
+            }else if(colorSensor.red()>colorSensor.blue()&&colorSensor.red()>=5){
                 telemetry.update();
-             backward(5,0.15);//TODO reverse or adjust speed if necessary
+                backward(1,0.15);//TODO reverse or adjust speed if necessary
                 telemetry.update();
+                offset=-5;
+                motorBigSlide.setPower(-0.5);//TODO adjust values
+                try {
+                    Thread.sleep(1600);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                jewelKnocker.setPosition(1);//TODO tune value so jewel lowerer goes back
+                motorBigSlide.setPower(0);
+                if(color==1){//REDPOSITION1 BLUEPOSITION2
+                    backward(25+offset,0.25);
+                }else{//REDPOSITION2 BLUEPOSITION1
+                    forward(25-offset,0.25);
+                }
             }else{
-                jewelKnocker.setPosition(1);
+                motorBigSlide.setPower(-.5);
+                try {
+                Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                motorBigSlide.setPower(0);
+                jewelKnocker.setPosition(1);//TODO tune value so jewel lowerer goes back
+                if(color==1){//REDPOSITION1 BLUEPOSITION2
+                    backward(30+offset,0.25);
+                }else{//REDPOSITION2 BLUEPOSITION1
+                    forward(30-offset,0.25);
+                }
             }
         }
         Diagnostics();
-        jewelKnocker.setPosition(1);//TODO tune value so jewel lowerer goes back
-        motorBigSlide.setPower(-0.5);//TODO adjust values
+        motorBigSlide.setPower(.5);
         try {
-            Thread.sleep(1600);
+            Thread.sleep(800);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         motorBigSlide.setPower(0);
-        motorForklift.setPower(0.50);//TODO adjust value
+        turnGyroPrecise(-90 * color, 0.25);
+        motorForklift.setPower(0.-50);//TODO adjust value
         try {
-            Thread.sleep(250);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         motorForklift.setPower(0);
-        /*
-        if(color==1){//REDPOSITION1 BLUEPOSITION2
-            backward(60,0.5);
-        }else{//REDPOSITION2 BLUEPOSITION1
-            forward(60,0.5);
-        }
-        Diagnostics();
-        motorBigSlide.setPower(-0.5);//TODO adjust values
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        motorBigSlide.setPower(0);
-        turnGyroPrecise(-90*color,0.25);
-        OpenAntlers();
-        forward(5,0.25);
-        CloseAntlers();//maybe different function for all the way closed
-        backward(10,0.25);
+        forward(10, 0.25);
+        OpenAntlers();//maybe different function for all the way closed
+        backward(2, 0.25);
         stopMotors();
         Diagnostics();
-    */
     }
     @Override
     public void runOpMode() {

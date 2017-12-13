@@ -1,19 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "testServo")
 public class testServo extends OpMode {
 
     Servo antlerLeft;
     Servo antlerRight;
-    Servo smallSlide;
     Servo jewelKnocker;
-    public testServo() {
-    }
 
     @Override
     public void init() {
@@ -21,13 +16,6 @@ public class testServo extends OpMode {
         antlerLeft = hardwareMap.servo.get("antlerLeft");
         antlerRight = hardwareMap.servo.get("antlerRight");
         jewelKnocker = hardwareMap.servo.get("jewelKnocker");
-
-        //int ButtonState = 0;
-        //boolean toggleA = false;
-        //boolean toggleDpadL = false;
-        //boolean toggleDpadR = false;
-        //boolean aPrevStat = false;
-
     }
     double Lpos=0;
     double Rpos=0;

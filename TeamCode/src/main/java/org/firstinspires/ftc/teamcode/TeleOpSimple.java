@@ -41,11 +41,7 @@ public class TeleOpSimple extends OpMode {
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-    //int ButtonState = 0;
-    //boolean toggleA = false;
-    //boolean toggleDpadL = false;
-    //boolean toggleDpadR = false;
-    //boolean aPrevStat = false;
+
     double n;
     double m;
     double leftValue;
