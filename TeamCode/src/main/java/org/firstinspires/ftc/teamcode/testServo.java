@@ -22,24 +22,7 @@ public class testServo extends OpMode {
     double jewel=0;
     @Override
     public void loop() {
-        /*if(Rpos<0){
-            Rpos=Rpos+0.1;
-        }
-        if(Rpos>1){
-            Rpos=Rpos-0.1;
-        }
-        if(Lpos<0){
-            Lpos=Lpos+0.1;
-        }
-        if(Lpos>1){
-            Lpos=Lpos-0.1;
-        }
-        if(jewel<0){
-            jewel=jewel+0.1;
-        }
-        if(jewel>1){
-            jewel=jewel-0.1;
-        }*/
+
         if(gamepad2.x){
             jewel=jewel+0.1;
         }
