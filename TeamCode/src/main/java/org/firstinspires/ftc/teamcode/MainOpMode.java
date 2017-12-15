@@ -85,33 +85,44 @@ public class MainOpMode extends LinearOpMode {
         }
         int position=sensorGyro.getIntegratedZValue();
         turnGyroPrecise(-90+position * color, 0.25);
+        motorBigSlide.setPower(0.5);
+        waitTime(1000);
+        motorBigSlide.setPower(0);
         lowerForklift();
         forward(10, 0.25);
         OpenAntlers();//maybe different function for all the way closed
+        pushIn();
         backward(2, 0.25);
         stopMotors();
         Diagnostics();
+    }
+
+    protected void pushIn() {
+        backward(5,0.25);
+        CloseAntlers();
+        forward(5,0.25);
     }
 
     protected void JewelGlyphParkAuto(int color) { //needs to be tested
         jewelKnocking(color);
-        forward(5,0.25);
-        int position=sensorGyro.getIntegratedZValue();
-        turnGyroPrecise(90+position * color, 0.25);
-
-        forward(5,0.25);
-        position=sensorGyro.getIntegratedZValue();
-        turnGyroPrecise(-90+position*color, 0.25);
-        lowerForklift();
-        forward(1, 0.25);
-        OpenAntlers();//maybe different function for all the way closed
-        backward(2, 0.25);
-        stopMotors();
-        Diagnostics();
+//        forward(5,0.25);
+//        int position=sensorGyro.getIntegratedZValue();
+//        turnGyroPrecise(90+position * color, 0.25);
+//
+//        forward(5,0.25);
+//        position=sensorGyro.getIntegratedZValue();
+//        turnGyroPrecise(-90+position*color, 0.25);
+//        lowerForklift();
+//        forward(1, 0.25);
+//        OpenAntlers();//maybe different function for all the way closed
+//        pushIn();
+//        backward(2, 0.25);
+//        stopMotors();
+//        Diagnostics();
     }
 
     protected void lowerForklift(){
-        motorForklift.setPower(0. - 50);
+        motorForklift.setPower(-0.50);
         waitTime(2000);
         motorForklift.setPower(0);
     }
@@ -125,44 +136,49 @@ public class MainOpMode extends LinearOpMode {
 
     protected void jewelKnocking(int color){
         CloseAntlers();
-
+        raiseForklift();
         lowerJewelKnocker();
         Diagnostics();
+        waitTime(2000);
         if (color == 1) {//THIS ONE IS FOR THE RED SIDE
             if (colorSensor.red() > colorSensor.blue() && colorSensor.red() > 5) {
                 telemetry.update();
-                forward(1, 0.15);//TODO reverse or adjust speed if necessary
+                jewelKnocker.setPosition(0.1);
+                forward(2, 0.15);
                 telemetry.update();
                 retractJewelKnocker();
-                backward(25, 0.25);
+                backward(10, 0.25);
 
             } else if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() > 5) {
                 telemetry.update();
-                backward(1, 0.15);//TODO reverse or adjust speed if necessary
+                jewelKnocker.setPosition(0.1);
+                backward(2, 0.15);
                 telemetry.update();
                 retractJewelKnocker();
                 backward(0, 0.25);
             } else {
                 retractJewelKnocker();
-                backward(20, 0.25);
+                backward(5, 0.25);
             }
         } else {//THIS ONE IS FOR THE BLUE SIDE
             if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() >= 5) {
                 telemetry.update();
-                forward(1, 0.15);//TODO reverse or adjust speed if necessary
+                jewelKnocker.setPosition(0.1);
+                forward(2, 0.15);
                 telemetry.update();
                 retractJewelKnocker();
-                forward(0, 0.25);//ADJUST
+                forward(0, 0.25);
 
             } else if (colorSensor.red() > colorSensor.blue() && colorSensor.red() >= 5) {
                 telemetry.update();
-                backward(1, 0.15);//TODO reverse or adjust speed if necessary
+                jewelKnocker.setPosition(0.1);
+                backward(2, 0.15);
                 telemetry.update();
                 retractJewelKnocker();
-                forward(25, 0.25);
+                forward(10, 0.25);
             } else {
                 retractJewelKnocker();
-                forward(20, 0.25);
+                forward(5, 0.25);
             }
         }
         Diagnostics();
@@ -181,6 +197,7 @@ public class MainOpMode extends LinearOpMode {
         waitTime(1600);
         jewelKnocker.setPosition(1);//TODO tune value so jewel lowerer goes back
         motorBigSlide.setPower(0);
+        waitTime(250);
     }
 
     protected void lowerJewelKnocker(){
@@ -190,7 +207,7 @@ public class MainOpMode extends LinearOpMode {
         jewelKnocker.setPosition(0.07); //lower jewel knocker
         waitTime(1000);
         motorBigSlide.setPower(0.5);//move knocker between jewels
-        waitTime(1600);
+        waitTime(1400);
         motorBigSlide.setPower(0);
         jewelKnocker.setPosition(0.01); //adjust a bit lower
     }
@@ -198,6 +215,7 @@ public class MainOpMode extends LinearOpMode {
     public void OpenAntlers() {
         antlerLeft.setPosition(0.4);
         antlerRight.setPosition(0);
+        waitTime(250);
     }
 
     public void CloseAntlers() {
@@ -314,7 +332,6 @@ public class MainOpMode extends LinearOpMode {
 
 
     public void turnGyroSloppy(int targetRelativeHeading, double speed) {
-
         int angleCurrent = sensorGyro.getIntegratedZValue();
         int targetHeading = angleCurrent + targetRelativeHeading;
         telemetry.addData("HeadingCurrent", angleCurrent);
@@ -322,7 +339,6 @@ public class MainOpMode extends LinearOpMode {
         telemetry.update();
         boolean right = false;
         boolean left = false;
-
         while (sensorGyro.getIntegratedZValue() > targetHeading + 5 || sensorGyro.getIntegratedZValue() < targetHeading - 5) {
             if (sensorGyro.getIntegratedZValue() > targetHeading + 5) {
                 if (right) {
@@ -351,36 +367,20 @@ public class MainOpMode extends LinearOpMode {
                 telemetry.addData("Target", targetRelativeHeading);
                 telemetry.update();
             } else break;
-
         }
         stopMotors();
-
         telemetry.addData("TurnDone", 0);
         telemetry.update();
     }
 
-
-
     public void Diagnostics() {
-        //telemetry.addData("Front Left Encoder", motorFrontLeft.getCurrentPosition());
-        //telemetry.addData("Front Right Encoder", motorFrontRight.getCurrentPosition());
-        //telemetry.addData("Back Left Encoder", motorBackLeft.getCurrentPosition());
-        //telemetry.addData("Back Right Encoder", motorBackRight.getCurrentPosition());
-        //telemetry.addData("Forklift Encoder", motorForklift.getCurrentPosition());
-        //telemetry.addData("Big Slide Encoder", motorBigSlide.getCurrentPosition());
+        telemetry.addData("gyro", sensorGyro.getIntegratedZValue());
         telemetry.addData("blue", colorSensor.blue());
         telemetry.addData("red", colorSensor.red());
         telemetry.update();
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
-
 
     @Override
     public void runOpMode() {
-
     }
 }
