@@ -84,7 +84,9 @@ public class MainOpMode extends LinearOpMode {
             forward(15,0.25);
         }
         int position=sensorGyro.getIntegratedZValue();
-        turnGyroPrecise(-90+position * color, 0.25);
+        telemetry.update();
+        turnGyroPrecise((-90+position), 0.25);
+        telemetry.update();
         motorBigSlide.setPower(0.5);
         waitTime(1000);
         motorBigSlide.setPower(0);
@@ -141,19 +143,17 @@ public class MainOpMode extends LinearOpMode {
         Diagnostics();
         waitTime(2000);
         if (color == 1) {//THIS ONE IS FOR THE RED SIDE
-            if (colorSensor.red() > colorSensor.blue() && colorSensor.red() > 5) {
+            if (colorSensor.red() > colorSensor.blue() && colorSensor.red() >= 5) {
                 telemetry.update();
-                jewelKnocker.setPosition(0.1);
+                jewelKnocker.setPosition(0.07);
                 forward(2, 0.15);
-                telemetry.update();
                 retractJewelKnocker();
                 backward(10, 0.25);
 
-            } else if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() > 5) {
+            } else if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() >= 5) {
                 telemetry.update();
-                jewelKnocker.setPosition(0.1);
+                jewelKnocker.setPosition(0.07);
                 backward(2, 0.15);
-                telemetry.update();
                 retractJewelKnocker();
                 backward(0, 0.25);
             } else {
@@ -163,22 +163,20 @@ public class MainOpMode extends LinearOpMode {
         } else {//THIS ONE IS FOR THE BLUE SIDE
             if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() >= 5) {
                 telemetry.update();
-                jewelKnocker.setPosition(0.1);
+                jewelKnocker.setPosition(0.07);
                 forward(2, 0.15);
-                telemetry.update();
                 retractJewelKnocker();
-                forward(0, 0.25);
+                backward(0, 0.25);
 
             } else if (colorSensor.red() > colorSensor.blue() && colorSensor.red() >= 5) {
                 telemetry.update();
-                jewelKnocker.setPosition(0.1);
+                jewelKnocker.setPosition(0.07);
                 backward(2, 0.15);
-                telemetry.update();
                 retractJewelKnocker();
-                forward(10, 0.25);
+                backward(10, 0.25);
             } else {
                 retractJewelKnocker();
-                forward(5, 0.25);
+                backward(5, 0.25);
             }
         }
         Diagnostics();
@@ -193,6 +191,8 @@ public class MainOpMode extends LinearOpMode {
     }
 
     protected void retractJewelKnocker() {
+        waitTime(1000);
+        telemetry.update();
         motorBigSlide.setPower(-0.5);//TODO adjust values
         waitTime(1600);
         jewelKnocker.setPosition(1);//TODO tune value so jewel lowerer goes back
