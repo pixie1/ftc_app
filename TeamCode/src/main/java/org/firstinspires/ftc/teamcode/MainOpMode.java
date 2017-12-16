@@ -88,7 +88,7 @@ public class MainOpMode extends LinearOpMode {
         turnGyroPrecise((-90+position), 0.25);
         telemetry.update();
         motorBigSlide.setPower(0.5);
-        waitTime(1000);
+        sleep(1000);
         motorBigSlide.setPower(0);
         lowerForklift();
         forward(10, 0.25);
@@ -125,13 +125,13 @@ public class MainOpMode extends LinearOpMode {
 
     protected void lowerForklift(){
         motorForklift.setPower(-0.50);
-        waitTime(2000);
+        sleep(2000);
         motorForklift.setPower(0);
     }
 
     protected void raiseForklift(){
         motorForklift.setPower(0.50);
-        waitTime(2500);
+        sleep(2500);
         motorForklift.setPower(0);
     }
 
@@ -141,7 +141,7 @@ public class MainOpMode extends LinearOpMode {
         raiseForklift();
         lowerJewelKnocker();
         Diagnostics();
-        waitTime(2000);
+        sleep(2000);
         if (color == 1) {//THIS ONE IS FOR THE RED SIDE
             if (colorSensor.red() > colorSensor.blue() && colorSensor.red() >= 5) {
                 telemetry.update();
@@ -182,32 +182,26 @@ public class MainOpMode extends LinearOpMode {
         Diagnostics();
     }
 
-    protected void waitTime(long timeInMilliseconds) {
-        try {
-            Thread.sleep(timeInMilliseconds);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+    
 
     protected void retractJewelKnocker() {
-        waitTime(1000);
+        sleep(1000);
         telemetry.update();
         motorBigSlide.setPower(-0.5);//TODO adjust values
-        waitTime(1600);
+        sleep(1600);
         jewelKnocker.setPosition(1);//TODO tune value so jewel lowerer goes back
         motorBigSlide.setPower(0);
-        waitTime(250);
+        sleep(250);
     }
 
     protected void lowerJewelKnocker(){
         motorBigSlide.setPower(-0.5);
-        waitTime(800);
+        sleep(800);
         motorBigSlide.setPower(0);
         jewelKnocker.setPosition(0.07); //lower jewel knocker
-        waitTime(1000);
+        sleep(1000);
         motorBigSlide.setPower(0.5);//move knocker between jewels
-        waitTime(1400);
+        sleep(1400);
         motorBigSlide.setPower(0);
         jewelKnocker.setPosition(0.01); //adjust a bit lower
     }
@@ -215,13 +209,13 @@ public class MainOpMode extends LinearOpMode {
     public void OpenAntlers() {
         antlerLeft.setPosition(0.4);
         antlerRight.setPosition(0);
-        waitTime(250);
+        sleep(250);
     }
 
     public void CloseAntlers() {
         antlerLeft.setPosition(0);
         antlerRight.setPosition(0.3);
-        waitTime(250);
+        sleep(250);
     }
 
     public int cmToEncoderTicks(double cm) {
@@ -257,7 +251,7 @@ public class MainOpMode extends LinearOpMode {
         motorFrontRight.setPower(speed);
         motorBackLeft.setPower(speed);
         motorBackRight.setPower(speed);
-        while (Math.abs(Math.abs(motorFrontRight.getCurrentPosition()) - Math.abs(current)) < Math.abs(disInEncoderTicks)) {
+        while (opModeIsActive() && Math.abs(Math.abs(motorFrontRight.getCurrentPosition()) - Math.abs(current)) < Math.abs(disInEncoderTicks)) {
             telemetry.addData("Centimeters:", disInCm);
             telemetry.addData("Encoder Ticks:", disInEncoderTicks);
             telemetry.addData("Left Encoder at:", motorFrontLeft.getCurrentPosition());
@@ -277,7 +271,7 @@ public class MainOpMode extends LinearOpMode {
         motorFrontRight.setPower(-speed);
         motorBackLeft.setPower(-speed);
         motorBackRight.setPower(-speed);
-        while (Math.abs(Math.abs(motorFrontRight.getCurrentPosition()) - Math.abs(current)) < Math.abs(disInEncoderTicks)) {
+        while (opModeIsActive() && Math.abs(Math.abs(motorFrontRight.getCurrentPosition()) - Math.abs(current)) < Math.abs(disInEncoderTicks)) {
             telemetry.addData("Centimeters:", disInCm);
             telemetry.addData("Encoder Ticks:", disInEncoderTicks);
             telemetry.addData("Front Left Encoder at:", motorFrontLeft.getCurrentPosition());
@@ -298,7 +292,7 @@ public class MainOpMode extends LinearOpMode {
         telemetry.update();
         boolean right = false;
         boolean left = false;
-        while (sensorGyro.getIntegratedZValue() > targetHeading || sensorGyro.getIntegratedZValue() < targetHeading) {
+        while (opModeIsActive() && (sensorGyro.getIntegratedZValue() > targetHeading || sensorGyro.getIntegratedZValue() < targetHeading)) {
             if (sensorGyro.getIntegratedZValue() > targetHeading) {
                 if (right) {
                     stopMotors();
@@ -339,7 +333,7 @@ public class MainOpMode extends LinearOpMode {
         telemetry.update();
         boolean right = false;
         boolean left = false;
-        while (sensorGyro.getIntegratedZValue() > targetHeading + 5 || sensorGyro.getIntegratedZValue() < targetHeading - 5) {
+        while (opModeIsActive() && (sensorGyro.getIntegratedZValue() > targetHeading + 5 || sensorGyro.getIntegratedZValue() < targetHeading - 5)) {
             if (sensorGyro.getIntegratedZValue() > targetHeading + 5) {
                 if (right) {
                     stopMotors();
