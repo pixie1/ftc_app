@@ -9,9 +9,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryImpl;
 
 public class MainOpMode extends LinearOpMode {
+
+    ConceptVuMarkIdentification vuMarkIdentification;
     DcMotor motorFrontRight;
     DcMotor motorFrontLeft;
     DcMotor motorBackRight;
@@ -23,6 +26,8 @@ public class MainOpMode extends LinearOpMode {
     Servo antlerRight;
     Servo smallSlide;
     Servo jewelKnocker;
+    Servo jewelKnocker2;
+
 
     ModernRoboticsI2cGyro sensorGyro;
     ColorSensor colorSensor;
@@ -41,6 +46,8 @@ public class MainOpMode extends LinearOpMode {
     public void initAll() {
         telemetry = new TelemetryImpl(this);
 
+        vuMarkIdentification= new ConceptVuMarkIdentification(hardwareMap, telemetry);
+
         motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
         motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
@@ -52,6 +59,7 @@ public class MainOpMode extends LinearOpMode {
         antlerLeft = hardwareMap.servo.get("antlerLeft");
         antlerRight = hardwareMap.servo.get("antlerRight");
         jewelKnocker = hardwareMap.servo.get("jewelKnocker");
+        jewelKnocker2 = hardwareMap.servo.get("jewelKnocker2");
         colorSensor = hardwareMap.colorSensor.get("colorSensor");
         sensorGyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("sensorGyro");
 
@@ -78,6 +86,8 @@ public class MainOpMode extends LinearOpMode {
 
     protected void JewelGlyphParkAutoPerimeter(int color) {
         jewelKnocking(color);
+        RelicRecoveryVuMark vumark= vuMarkIdentification.getVuMark();
+
         if (color==1){
             backward(15,0.25);
         }else {
@@ -166,17 +176,17 @@ public class MainOpMode extends LinearOpMode {
                 jewelKnocker.setPosition(0.07);
                 forward(2, 0.15);
                 retractJewelKnocker();
-                backward(0, 0.25);
+                forward(0, 0.25);
 
             } else if (colorSensor.red() > colorSensor.blue() && colorSensor.red() >= 5) {
                 telemetry.update();
                 jewelKnocker.setPosition(0.07);
                 backward(2, 0.15);
                 retractJewelKnocker();
-                backward(10, 0.25);
+                forward(10, 0.25);
             } else {
                 retractJewelKnocker();
-                backward(5, 0.25);
+                forward(5, 0.25);
             }
         }
         Diagnostics();

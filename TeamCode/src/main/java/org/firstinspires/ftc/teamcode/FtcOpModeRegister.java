@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
 public class  FtcOpModeRegister implements OpModeRegister {
   public void register(OpModeManager manager) {
     manager.register("MasterThroneTeleopNew", MasterThroneTeleopNew.class);
+    manager.register("testServoCR", testServoCR.class);
     manager.register("testMotor", testMotor.class);
     manager.register("testSensor", testSensor.class);
     manager.register("JewelGlyphParkAutoRed", JewelGlyphParkAutoRed.class);

@@ -9,6 +9,7 @@ public class testServo extends OpMode {
     Servo antlerLeft;
     Servo antlerRight;
     Servo jewelKnocker;
+    Servo jewelKnocker2;
 
     @Override
     public void init() {
@@ -16,10 +17,13 @@ public class testServo extends OpMode {
         antlerLeft = hardwareMap.servo.get("antlerLeft");
         antlerRight = hardwareMap.servo.get("antlerRight");
         jewelKnocker = hardwareMap.servo.get("jewelKnocker");
+        jewelKnocker2 = hardwareMap.servo.get("jewelKnocker2");
     }
     double Lpos=0;
     double Rpos=0;
     double jewel=0;
+    double jewel2=0.13;
+
     @Override
     public void loop() {
 
@@ -41,12 +45,21 @@ public class testServo extends OpMode {
         if (gamepad2.left_trigger>0){
             Lpos=Lpos-0.1;
         }
+        if (gamepad2.a) {
+            jewel2 = jewel2 + 0.1;
+        }
+        if (gamepad2.b){
+            jewel2=jewel2-0.1;
+        }
+
         telemetry.addData("JewelLower",jewel);
         telemetry.addData("LeftPosition",Lpos);
         telemetry.addData("RightPosition",Rpos);
+        telemetry.addData("jewelHitter",jewel2);
         telemetry.update();
         jewelKnocker.setPosition(jewel);
         antlerLeft.setPosition(Lpos);
         antlerRight.setPosition(Rpos);
+        jewelKnocker2.setPosition(jewel2);
     }
 }
