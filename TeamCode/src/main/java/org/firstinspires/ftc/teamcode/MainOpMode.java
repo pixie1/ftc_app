@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -24,12 +27,15 @@ public class MainOpMode extends LinearOpMode {
 
     Servo antlerLeft;
     Servo antlerRight;
-    Servo smallSlide;
     Servo jewelKnocker;
     Servo jewelKnocker2;
 
+    CRServo leftSide;
+    CRServo rightSide;
 
     ModernRoboticsI2cGyro sensorGyro;
+    ModernRoboticsI2cRangeSensor rangeSensor;
+    DigitalChannel digitalTouch;
     ColorSensor colorSensor;
     public Telemetry telemetry;
 
@@ -55,13 +61,16 @@ public class MainOpMode extends LinearOpMode {
         motorForklift = hardwareMap.dcMotor.get("motorForklift");
         motorBigSlide = hardwareMap.dcMotor.get("motorBigSlide");
 
-        smallSlide = hardwareMap.servo.get("smallSlide");
         antlerLeft = hardwareMap.servo.get("antlerLeft");
         antlerRight = hardwareMap.servo.get("antlerRight");
         jewelKnocker = hardwareMap.servo.get("jewelKnocker");
         jewelKnocker2 = hardwareMap.servo.get("jewelKnocker2");
         colorSensor = hardwareMap.colorSensor.get("colorSensor");
+        leftSide = hardwareMap.crservo.get("intakeLeft");
+        rightSide = hardwareMap.crservo.get("intakeRight");
         sensorGyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("sensorGyro");
+        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensor");
+        digitalTouch = hardwareMap.get(DigitalChannel.class, "touchSensor");
 
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -80,17 +89,19 @@ public class MainOpMode extends LinearOpMode {
         telemetry.update();
 
         colorSensor.enableLed(true);
+        jewelKnocker2.setPosition(.13);
+        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
         waitForStart();
 
     }
 
     protected void JewelGlyphParkAutoPerimeter(int color) {
         jewelKnocking(color);
-        RelicRecoveryVuMark vumark= vuMarkIdentification.getVuMark();
+        RelicRecoveryVuMark vumark = vuMarkIdentification.getVuMark();
 
         if (color==1){
             backward(15,0.25);
-        }else {
+        }else  {
             forward(15,0.25);
         }
         int position=sensorGyro.getIntegratedZValue();
@@ -147,6 +158,7 @@ public class MainOpMode extends LinearOpMode {
 
 
     protected void jewelKnocking(int color){
+        vuMarkIdentification.getVuMark();
         CloseAntlers();
         raiseForklift();
         lowerJewelKnocker();
@@ -156,43 +168,60 @@ public class MainOpMode extends LinearOpMode {
             if (colorSensor.red() > colorSensor.blue() && colorSensor.red() >= 5) {
                 telemetry.update();
                 jewelKnocker.setPosition(0.07);
-                forward(2, 0.15);
+                jewelKnocker.setPosition(.3);
+                sleep(1000);
+                jewelKnocker2.setPosition(.13);
+
                 retractJewelKnocker();
-                backward(10, 0.25);
+
 
             } else if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() >= 5) {
                 telemetry.update();
                 jewelKnocker.setPosition(0.07);
-                backward(2, 0.15);
+                jewelKnocker2.setPosition(0);
+                sleep(1000);
+                jewelKnocker2.setPosition(.13);
                 retractJewelKnocker();
-                backward(0, 0.25);
             } else {
                 retractJewelKnocker();
-                backward(5, 0.25);
             }
         } else {//THIS ONE IS FOR THE BLUE SIDE
             if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() >= 5) {
                 telemetry.update();
                 jewelKnocker.setPosition(0.07);
-                forward(2, 0.15);
+                jewelKnocker2.setPosition(.3);
+                sleep(1000);
+                jewelKnocker2.setPosition(.13);
                 retractJewelKnocker();
-                forward(0, 0.25);
 
             } else if (colorSensor.red() > colorSensor.blue() && colorSensor.red() >= 5) {
                 telemetry.update();
                 jewelKnocker.setPosition(0.07);
-                backward(2, 0.15);
+                jewelKnocker2.setPosition(0);
+                sleep(1000);
+                jewelKnocker.setPosition(.13);
                 retractJewelKnocker();
-                forward(10, 0.25);
             } else {
                 retractJewelKnocker();
-                forward(5, 0.25);
             }
         }
         Diagnostics();
     }
 
-    
+    int count=0;
+
+    protected void vumarkDistanceCounter(){
+
+        telemetry.addData("CM Ultra", rangeSensor.cmUltrasonic());
+        if (rangeSensor.cmOptical() <= 10){
+            count=count+1;
+        }
+        if (count==3){
+            stopMotors();
+        }
+
+
+    }
 
     protected void retractJewelKnocker() {
         sleep(1000);

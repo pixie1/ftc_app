@@ -51,12 +51,12 @@ public class ConceptVuMarkIdentification {
     HardwareMap hardwareMap;
     Telemetry telemetry;
 
-    public ConceptVuMarkIdentification(HardwareMap hardwareMap, Telemetry telemetry){
+    public  ConceptVuMarkIdentification(HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap=hardwareMap;
         this.telemetry=telemetry;
     }
 
-     public RelicRecoveryVuMark getVuMark() {
+    public RelicRecoveryVuMark getVuMark() {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);

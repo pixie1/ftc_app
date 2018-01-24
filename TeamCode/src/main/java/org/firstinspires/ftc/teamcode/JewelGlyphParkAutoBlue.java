@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 public class JewelGlyphParkAutoBlue extends MainOpMode {
     @Override
     public void runOpMode() {
-        int color = 1; //1 for red -1 for blue
+        int color = -1; //1 for red -1 for blue
         initAll();
        JewelGlyphParkAuto(color);
     }

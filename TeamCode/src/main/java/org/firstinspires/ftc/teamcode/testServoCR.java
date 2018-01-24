@@ -15,8 +15,10 @@ public class testServoCR extends OpMode {
     @Override
     public void init() {
 
-        leftSide = hardwareMap.crservo.get("leftSide");
-        rightSide = hardwareMap.crservo.get("rightSide");
+        leftSide = hardwareMap.crservo.get("intakeLeft");
+        rightSide = hardwareMap.crservo.get("intakeRight");
+        leftSide.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightSide.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 
@@ -24,10 +26,12 @@ public class testServoCR extends OpMode {
     public void loop() {
 
         if(gamepad2.x){
-            leftSide.setDirection(DcMotorSimple.Direction.FORWARD);
-            rightSide.setDirection(DcMotorSimple.Direction.REVERSE);
-            leftSide.setPower(1);
-            rightSide .setPower(1);
+            leftSide.setPower(0.5);
+            rightSide .setPower(0.5);
+        }
+          if (gamepad2.a) {
+            leftSide.setPower(0.0);
+            rightSide .setPower(0.0);
         }
 
     }

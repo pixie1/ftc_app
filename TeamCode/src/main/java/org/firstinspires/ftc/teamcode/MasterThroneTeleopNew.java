@@ -2,9 +2,15 @@
 
  import com.qualcomm.robotcore.eventloop.opmode.OpMode;
  import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+ import com.qualcomm.robotcore.hardware.CRServo;
  import com.qualcomm.robotcore.hardware.DcMotor;
+ import com.qualcomm.robotcore.hardware.DcMotorSimple;
  import com.qualcomm.robotcore.hardware.Servo;
-@TeleOp(name = "MasterThroneTeleopNew")
+ import com.qualcomm.robotcore.hardware.DigitalChannel;
+
+
+
+ @TeleOp(name = "MasterThroneTeleopNew")
 public class MasterThroneTeleopNew extends OpMode {
 
     DcMotor motorFrontRight;
@@ -13,10 +19,14 @@ public class MasterThroneTeleopNew extends OpMode {
     DcMotor motorBackLeft;
     DcMotor motorForklift;
     DcMotor motorBigSlide;
-//
+
     Servo antlerLeft;
     Servo antlerRight;
     Servo jewelKnocker;
+     CRServo leftSide;
+     CRServo rightSide;
+
+    DigitalChannel touchSensor;
 
     public MasterThroneTeleopNew() {
     }
@@ -34,18 +44,28 @@ public class MasterThroneTeleopNew extends OpMode {
         antlerLeft = hardwareMap.servo.get("antlerLeft");
         antlerRight = hardwareMap.servo.get("antlerRight");
         jewelKnocker = hardwareMap.servo.get("jewelKnocker");
+        leftSide = hardwareMap.crservo.get("intakeLeft");
+        rightSide = hardwareMap.crservo.get("intakeRight");
+
+        touchSensor = hardwareMap.get(DigitalChannel.class, "touchSensor");
+        touchSensor.setMode(DigitalChannel.Mode.INPUT);
 
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        leftSide.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightSide.setDirection(DcMotorSimple.Direction.REVERSE);
+
     }
      double n;
      double m;
      double leftValue;
      double rightValue;
     double sc = 1;
-    int fc = 1;
+    int stopForklift = 1;
+     int antlerCounter = 1;
      @Override
     public void loop() {
            leftValue = Math.abs(gamepad1.left_stick_x) + Math.abs(gamepad1.left_stick_y);
@@ -80,9 +100,10 @@ public class MasterThroneTeleopNew extends OpMode {
         motorBackRight.setPower(Math.min(n*sc,0.8));
         motorFrontLeft.setPower(Math.min(m*sc,0.8));
         motorBackLeft.setPower(Math.min(m*sc,0.8));
+
          if (gamepad2.a) { //closing left
-             antlerLeft.setPosition(0);
-             antlerRight.setPosition(0.3);
+             antlerLeft.setPosition(0.55);
+             antlerRight.setPosition(0.75);
              try {
                  Thread.sleep(250);
              } catch (InterruptedException e) {
@@ -97,10 +118,24 @@ public class MasterThroneTeleopNew extends OpMode {
 
              motorForklift.setPower(0);
          }
+
          if (gamepad2.x) { //opening left
-             antlerLeft.setPosition(0.4);
-             antlerRight.setPosition(0);
+             antlerLeft.setPosition(0.9 );
+             antlerRight.setPosition(.5);
          }
+
+         if (gamepad2.y){
+             antlerCounter=antlerCounter+1;
+             if (antlerCounter == 4){
+                 antlerCounter=1;
+             }
+         }
+
+         if (gamepad2.b){
+             leftSide.setPower(0.5);
+             rightSide.setPower(0.5);
+         }
+
          if (gamepad2.dpad_left) { //
              motorBigSlide.setPower(0.75);
          } else if(gamepad2.dpad_right) {
@@ -108,24 +143,41 @@ public class MasterThroneTeleopNew extends OpMode {
          } else {
              motorBigSlide.setPower(0);
          }
-         if (gamepad2.left_bumper) {
+         if (gamepad1.left_bumper) {
              jewelKnocker.setPosition(1);
          }
-         if (gamepad2.left_trigger>0){
+         if (gamepad1.left_trigger>0){
              jewelKnocker.setPosition(0);
          }
-         /*if (Math.abs(motorForklift.getCurrentPosition())>=6736) {
-             fc=0;
+         if (gamepad2.left_bumper){
+               leftSide.setPower(0.5);
+             rightSide.setPower(0.5);
+         }
+         if (gamepad2.left_trigger>0){
+             leftSide.setPower(0.0);
+             rightSide.setPower(0.0);
+         }
+
+         if (touchSensor.getState() == true) {
+            stopForklift=1;
          } else {
-             fc=1;
-         }*/
-         if (gamepad2.right_bumper) {
-             motorForklift.setPower(0.75*fc);
+             stopForklift=0;
+         }
+         if (gamepad2.right_bumper) { //going down
+             motorForklift.setPower(0.75*stopForklift);
          } else if (gamepad2.right_trigger>0) {
-             motorForklift.setPower(-0.75*fc);
+             motorForklift.setPower(-0.75);
          } else {
              motorForklift.setPower(0);
          }
+
+         //open intake off
+         //almost close- intake on
+         //fully close - intake off
+         //button for intake send out
+
+
+
          telemetry.addData("Forklift Encoder", motorForklift.getCurrentPosition());
    }
 }
