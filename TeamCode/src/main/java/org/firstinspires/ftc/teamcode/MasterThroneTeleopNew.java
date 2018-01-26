@@ -58,6 +58,10 @@ public class MasterThroneTeleopNew extends OpMode {
         leftSide.setDirection(DcMotorSimple.Direction.FORWARD);
         rightSide.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        leftSide.setPower(0);
+        rightSide.setPower(0);
+
+
     }
      double n;
      double m;
@@ -73,13 +77,13 @@ public class MasterThroneTeleopNew extends OpMode {
          telemetry.addData("leftstick", leftValue);
          telemetry.addData("rightstick", rightValue);
          if(rightValue >= leftValue){
-             n = -(((gamepad1.right_stick_x + gamepad1.right_stick_y))*.4);
-             m = -((-(gamepad1.right_stick_y - gamepad1.right_stick_x))*.4);
+             n = (((-gamepad1.right_stick_x + gamepad1.right_stick_y))*.4);
+             m = ((-(gamepad1.right_stick_y + gamepad1.right_stick_x))*.4);
              telemetry.addData("n (rightspeed)", n);
              telemetry.addData("m (leftspeed", m);
          } if(leftValue > rightValue){
-            n = -(((gamepad1.left_stick_x + gamepad1.left_stick_y))/.8);
-             m = -((-(gamepad1.left_stick_y - gamepad1.left_stick_x))/.8);
+            n = (((-gamepad1.left_stick_x + gamepad1.left_stick_y))/.8);
+             m = ((-(gamepad1.left_stick_y + gamepad1.left_stick_x))/.8);
              telemetry.addData("n (rightspeed)", n);
              telemetry.addData("m (leftspeed", m);
          }
@@ -125,6 +129,8 @@ public class MasterThroneTeleopNew extends OpMode {
          }
 
          if (gamepad2.y){
+             leftSide.setPower(-.5);
+             rightSide.setPower(-.5);
              antlerCounter=antlerCounter+1;
              if (antlerCounter == 4){
                  antlerCounter=1;
@@ -132,6 +138,8 @@ public class MasterThroneTeleopNew extends OpMode {
          }
 
          if (gamepad2.b){
+             antlerLeft.setPosition(0.75);
+             antlerLeft.setPosition(0.65);
              leftSide.setPower(0.5);
              rightSide.setPower(0.5);
          }

@@ -29,7 +29,9 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -39,6 +41,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
+import java.io.InterruptedIOException;
 
 
 public class ConceptVuMarkIdentification {
@@ -57,37 +61,45 @@ public class ConceptVuMarkIdentification {
     }
 
     public RelicRecoveryVuMark getVuMark() {
+        int count=0;
+        try {
+            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+            VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+            parameters.vuforiaLicenseKey = "AZ5ECL3/////AAAAGdZWcpeFHEUll169BS5Mx91UnE+6CWZaWquMMBamtU6q43QpK/7C6vXJbKCRSr8gN5vRnhcAmpfqgBdgNLIOLkZgpOtuathEDJrrSxNFkmYCIxNwoLwZCWrxuS2m+ZgBZu4ZHm7FBiGofwpkn917uyNZwvL6OKkCSh2p1Eb1+jPg3+Vo13b6RbQ9foNIP+lE68DLqdRGOPaf0GeJCZOeK/W38DVsYf5atSxUzxx0X+Tb/fDTotlr5OnhZlYTsaGyj/RJwbiIQksHjj9caggTXEOVu0RGdm2JsdOa+3MSqhg6RS+AZM2t/MZ6s3CKYeaUNjPzG7krKTLJKWQjAc6YPTDCz432S7IAGbO7+napJv4u";
 
-        parameters.vuforiaLicenseKey = "AZ5ECL3/////AAAAGdZWcpeFHEUll169BS5Mx91UnE+6CWZaWquMMBamtU6q43QpK/7C6vXJbKCRSr8gN5vRnhcAmpfqgBdgNLIOLkZgpOtuathEDJrrSxNFkmYCIxNwoLwZCWrxuS2m+ZgBZu4ZHm7FBiGofwpkn917uyNZwvL6OKkCSh2p1Eb1+jPg3+Vo13b6RbQ9foNIP+lE68DLqdRGOPaf0GeJCZOeK/W38DVsYf5atSxUzxx0X+Tb/fDTotlr5OnhZlYTsaGyj/RJwbiIQksHjj9caggTXEOVu0RGdm2JsdOa+3MSqhg6RS+AZM2t/MZ6s3CKYeaUNjPzG7krKTLJKWQjAc6YPTDCz432S7IAGbO7+napJv4u";
-
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
-        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
-
-        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
-        relicTemplate.setName("relicVuMarkTemplate"); //debugging
-
-
-
-        relicTrackables.activate();
-
-        while (true) {
-
-
-            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
-
-                telemetry.addData("VuMark", "%s visible", vuMark);
-                return vuMark;
-            }
-            else {
-                telemetry.addData("VuMark", "not visible");
-            }
-
+            parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+            this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
             telemetry.update();
+            VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+            VuforiaTrackable relicTemplate = relicTrackables.get(0);
+            relicTemplate.setName("relicVuMarkTemplate");
+
+            relicTrackables.activate();
+            ElapsedTime lineLookTime = new ElapsedTime();
+            while (lineLookTime.seconds()<3) {
+
+                RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+                if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+
+                    telemetry.addData("VuMark", "%s visible", vuMark);
+                    telemetry.update();
+                    return vuMark;
+                } else {
+                    telemetry.addData("VuMark", "not visible");
+                }
+
+                telemetry.update();
+            }
+            return RelicRecoveryVuMark.UNKNOWN;
+        }
+
+        catch (ExceptionInInitializerError e){
+            if (count<2){
+                count++;
+                return getVuMark();
+            } else
+                throw e;
         }
     }
 }

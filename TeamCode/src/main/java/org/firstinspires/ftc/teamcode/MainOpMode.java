@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -12,6 +14,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryImpl;
 
@@ -33,23 +39,33 @@ public class MainOpMode extends LinearOpMode {
     CRServo leftSide;
     CRServo rightSide;
 
-    ModernRoboticsI2cGyro sensorGyro;
-    ModernRoboticsI2cRangeSensor rangeSensor;
+  //  ModernRoboticsI2cGyro sensorGyro;
+    BNO055IMU imu;
     DigitalChannel digitalTouch;
     ColorSensor colorSensor;
     public Telemetry telemetry;
+
+
 
     //EncoderUtilVars
     ElapsedTime lineLookTime = new ElapsedTime();
     final int ENCODER_TICKS_NEVEREST = 1120;
     final double INCH_TO_CM = 2.54;
-    final int WHEEL_DIAMETER = 4 / 2; //in inches
+    final int WHEEL_DIAMETER = 4 *2; //in inches
     //VarsDone
 
     public MainOpMode() {
     }
 
     public void initAll() {
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+//        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+//        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+//        parameters.loggingEnabled      = true;
+//        parameters.loggingTag          = "IMU";
+//        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
         telemetry = new TelemetryImpl(this);
 
         vuMarkIdentification= new ConceptVuMarkIdentification(hardwareMap, telemetry);
@@ -68,9 +84,11 @@ public class MainOpMode extends LinearOpMode {
         colorSensor = hardwareMap.colorSensor.get("colorSensor");
         leftSide = hardwareMap.crservo.get("intakeLeft");
         rightSide = hardwareMap.crservo.get("intakeRight");
-        sensorGyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("sensorGyro");
-        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensor");
+        leftSide.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightSide.setDirection(DcMotorSimple.Direction.REVERSE);
+     //   sensorGyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("sensorGyro");
         digitalTouch = hardwareMap.get(DigitalChannel.class, "touchSensor");
+        imu=hardwareMap.get(BNO055IMU.class, "imu");
 
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -80,60 +98,98 @@ public class MainOpMode extends LinearOpMode {
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        sensorGyro.calibrate();
-        while (sensorGyro.isCalibrating()) {
-            telemetry.addData("gyro sensor is calibrating", "0");
-            telemetry.update();
-        }
+//        sensorGyro.calibrate();
+//        while (sensorGyro.isCalibrating()) {
+//            telemetry.addData("gyro sensor is calibrating", "0");
+//            telemetry.update();
+//        }
         telemetry.addData("Initialization done", "0");
         telemetry.update();
 
         colorSensor.enableLed(true);
-        jewelKnocker2.setPosition(.13);
+        jewelKnocker2.setPosition(.8);
         digitalTouch.setMode(DigitalChannel.Mode.INPUT);
         waitForStart();
 
     }
 
     protected void JewelGlyphParkAutoPerimeter(int color) {
-        jewelKnocking(color);
+
         RelicRecoveryVuMark vumark = vuMarkIdentification.getVuMark();
+         jewelKnocking(color);
+
+        telemetry.addData("vumark", vumark);
+        telemetry.update();
 
         if (color==1){
-            backward(15,0.25);
+            forward(20,0.25);
         }else  {
-            forward(15,0.25);
+            backward(20,0.25);
         }
-        int position=sensorGyro.getIntegratedZValue();
+
+        if (vumark==RelicRecoveryVuMark.RIGHT){
+            if (color==1){
+                forward(33,0.25);
+            }else  {
+                backward(33,0.25);
+            }
+        } else if(vumark==RelicRecoveryVuMark.LEFT){
+            if (color ==1){
+                forward(73,0.25);
+            }else  {
+                backward(73,0.25);
+            }
+        }else {
+            if (color==1){
+                forward(53,0.25);
+            }else  {
+                backward(53,0.25);
+            }
+        }
+       float pos= getAngleFromIMU();
+       // int position=getAngleFromIMU();
+        telemetry.addData("vumark", vumark);
+        telemetry.addData("gyro", pos);
         telemetry.update();
-        turnGyroPrecise((-90+position), 0.25);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        turnGyroPrecise((-90+(int)pos), 0.25);
+        telemetry.addData("gyro", pos);
         telemetry.update();
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         motorBigSlide.setPower(0.5);
         sleep(1000);
         motorBigSlide.setPower(0);
         lowerForklift();
-        forward(10, 0.25);
+        backward(40, 0.25);
         OpenAntlers();//maybe different function for all the way closed
         pushIn();
-        backward(2, 0.25);
+        forward(8, 0.25);
         stopMotors();
         Diagnostics();
     }
 
     protected void pushIn() {
-        backward(5,0.25);
+        forward(20,0.25);
         CloseAntlers();
-        forward(5,0.25);
+        backward(20,0.25);
     }
 
     protected void JewelGlyphParkAuto(int color) { //needs to be tested
         jewelKnocking(color);
 //        forward(5,0.25);
-//        int position=sensorGyro.getIntegratedZValue();
+//        int position=getAngleFromIMU();
 //        turnGyroPrecise(90+position * color, 0.25);
 //
 //        forward(5,0.25);
-//        position=sensorGyro.getIntegratedZValue();
+//        position=getAngleFromIMU();
 //        turnGyroPrecise(-90+position*color, 0.25);
 //        lowerForklift();
 //        forward(1, 0.25);
@@ -152,13 +208,13 @@ public class MainOpMode extends LinearOpMode {
 
     protected void raiseForklift(){
         motorForklift.setPower(0.50);
-        sleep(2500);
+        sleep(1700);
         motorForklift.setPower(0);
     }
 
 
     protected void jewelKnocking(int color){
-        vuMarkIdentification.getVuMark();
+
         CloseAntlers();
         raiseForklift();
         lowerJewelKnocker();
@@ -168,20 +224,19 @@ public class MainOpMode extends LinearOpMode {
             if (colorSensor.red() > colorSensor.blue() && colorSensor.red() >= 5) {
                 telemetry.update();
                 jewelKnocker.setPosition(0.07);
-                jewelKnocker.setPosition(.3);
+                jewelKnocker2.setPosition(1);
                 sleep(1000);
-                jewelKnocker2.setPosition(.13);
-
+                jewelKnocker2.setPosition(.85 );
                 retractJewelKnocker();
-
 
             } else if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() >= 5) {
                 telemetry.update();
                 jewelKnocker.setPosition(0.07);
                 jewelKnocker2.setPosition(0);
                 sleep(1000);
-                jewelKnocker2.setPosition(.13);
+                jewelKnocker2.setPosition(.75);
                 retractJewelKnocker();
+
             } else {
                 retractJewelKnocker();
             }
@@ -189,17 +244,17 @@ public class MainOpMode extends LinearOpMode {
             if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() >= 5) {
                 telemetry.update();
                 jewelKnocker.setPosition(0.07);
-                jewelKnocker2.setPosition(.3);
+                jewelKnocker2.setPosition(1);
                 sleep(1000);
-                jewelKnocker2.setPosition(.13);
+                jewelKnocker2.setPosition(0.85);
                 retractJewelKnocker();
 
             } else if (colorSensor.red() > colorSensor.blue() && colorSensor.red() >= 5) {
                 telemetry.update();
                 jewelKnocker.setPosition(0.07);
-                jewelKnocker2.setPosition(0);
+                jewelKnocker2.setPosition(0.5);
                 sleep(1000);
-                jewelKnocker.setPosition(.13);
+                jewelKnocker.setPosition(.75);
                 retractJewelKnocker();
             } else {
                 retractJewelKnocker();
@@ -208,37 +263,24 @@ public class MainOpMode extends LinearOpMode {
         Diagnostics();
     }
 
-    int count=0;
-
-    protected void vumarkDistanceCounter(){
-
-        telemetry.addData("CM Ultra", rangeSensor.cmUltrasonic());
-        if (rangeSensor.cmOptical() <= 10){
-            count=count+1;
-        }
-        if (count==3){
-            stopMotors();
-        }
-
-
-    }
 
     protected void retractJewelKnocker() {
         sleep(1000);
         telemetry.update();
         motorBigSlide.setPower(-0.5);//TODO adjust values
-        sleep(1600);
-        jewelKnocker.setPosition(1);//TODO tune value so jewel lowerer goes back
+        sleep(2000);
+        jewelKnocker.setPosition(0.9);//TODO tune value so jewel lowerer goes back
         motorBigSlide.setPower(0);
         sleep(250);
+        jewelKnocker2.setPosition(0.8);
     }
 
     protected void lowerJewelKnocker(){
         motorBigSlide.setPower(-0.5);
         sleep(800);
         motorBigSlide.setPower(0);
-        jewelKnocker.setPosition(0.07); //lower jewel knocker
-        sleep(1000);
+        jewelKnocker.setPosition(0.1); //lower jewel knocker
+        sleep(1500);
         motorBigSlide.setPower(0.5);//move knocker between jewels
         sleep(1400);
         motorBigSlide.setPower(0);
@@ -246,15 +288,25 @@ public class MainOpMode extends LinearOpMode {
     }
 
     public void OpenAntlers() {
-        antlerLeft.setPosition(0.4);
-        antlerRight.setPosition(0);
+        antlerLeft.setPosition(0.9);
+        antlerRight.setPosition(.5);
         sleep(250);
     }
 
     public void CloseAntlers() {
-        antlerLeft.setPosition(0);
-        antlerRight.setPosition(0.3);
+        antlerLeft.setPosition(0.55);
+        antlerRight.setPosition(0.75);
+        leftSide.setPower(.5);
+        rightSide.setPower(.5);
+        sleep(1000);
+        leftSide.setPower(0);
+        rightSide.setPower(0);
         sleep(250);
+    }
+
+    public int getAngleFromIMU(){
+        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return (int)angles.firstAngle;
     }
 
     public int cmToEncoderTicks(double cm) {
@@ -324,15 +376,16 @@ public class MainOpMode extends LinearOpMode {
 
     public void turnGyroPrecise(int targetRelativeHeading, double speed) {
 
-        int angleCurrent = sensorGyro.getIntegratedZValue();
-        int targetHeading = angleCurrent + targetRelativeHeading;
-        telemetry.addData("HeadingCurrent", angleCurrent);
+        //int angleCurrent = getAngleFromIMU();
+        int current=getAngleFromIMU();
+        int targetHeading = current + targetRelativeHeading;
+        telemetry.addData("HeadingCurrent", current);
         telemetry.addData("Target", targetHeading);
         telemetry.update();
         boolean right = false;
         boolean left = false;
-        while (opModeIsActive() && (sensorGyro.getIntegratedZValue() > targetHeading || sensorGyro.getIntegratedZValue() < targetHeading)) {
-            if (sensorGyro.getIntegratedZValue() > targetHeading) {
+        while (opModeIsActive() && (getAngleFromIMU() > targetHeading || getAngleFromIMU() < targetHeading)) {
+            if (getAngleFromIMU() > targetHeading) {
                 if (right) {
                     stopMotors();
                     right = false;
@@ -342,10 +395,10 @@ public class MainOpMode extends LinearOpMode {
                 motorBackRight.setPower(speed);
                 motorFrontLeft.setPower(-speed);
                 motorFrontRight.setPower(speed);
-                telemetry.addData("HeadingCurrent", sensorGyro.getIntegratedZValue());
+                telemetry.addData("HeadingCurrent", getAngleFromIMU());
                 telemetry.addData("Target", targetRelativeHeading);
                 telemetry.update();
-            } else if (sensorGyro.getIntegratedZValue() < targetHeading) {
+            } else if (getAngleFromIMU() < targetHeading) {
                 if (left) {
                     stopMotors();
                     left = false;
@@ -355,7 +408,7 @@ public class MainOpMode extends LinearOpMode {
                 motorBackRight.setPower(-speed);
                 motorFrontLeft.setPower(speed);
                 motorFrontRight.setPower(-speed);
-                telemetry.addData("HeadingCurrent", sensorGyro.getIntegratedZValue());
+                telemetry.addData("HeadingCurrent", getAngleFromIMU());
                 telemetry.addData("Target", targetRelativeHeading);
                 telemetry.update();
             } else break;
@@ -365,15 +418,15 @@ public class MainOpMode extends LinearOpMode {
 
 
     public void turnGyroSloppy(int targetRelativeHeading, double speed) {
-        int angleCurrent = sensorGyro.getIntegratedZValue();
+        int angleCurrent = getAngleFromIMU();
         int targetHeading = angleCurrent + targetRelativeHeading;
         telemetry.addData("HeadingCurrent", angleCurrent);
         telemetry.addData("Target", targetHeading);
         telemetry.update();
         boolean right = false;
         boolean left = false;
-        while (opModeIsActive() && (sensorGyro.getIntegratedZValue() > targetHeading + 5 || sensorGyro.getIntegratedZValue() < targetHeading - 5)) {
-            if (sensorGyro.getIntegratedZValue() > targetHeading + 5) {
+        while (opModeIsActive() && (getAngleFromIMU() > targetHeading + 5 || getAngleFromIMU() < targetHeading - 5)) {
+            if (getAngleFromIMU()> targetHeading + 5) {
                 if (right) {
                     stopMotors();
                     right = false;
@@ -383,10 +436,10 @@ public class MainOpMode extends LinearOpMode {
                 motorBackRight.setPower(-speed);
                 motorFrontLeft.setPower(speed);
                 motorFrontRight.setPower(-speed);
-                telemetry.addData("HeadingCurrent", sensorGyro.getIntegratedZValue());
+                telemetry.addData("HeadingCurrent", getAngleFromIMU());
                 telemetry.addData("Target", targetRelativeHeading);
                 telemetry.update();
-            } else if (sensorGyro.getIntegratedZValue() < targetHeading - 5) {
+            } else if (getAngleFromIMU() < targetHeading - 5) {
                 if (left) {
                     stopMotors();
                     left = false;
@@ -396,7 +449,7 @@ public class MainOpMode extends LinearOpMode {
                 motorBackRight.setPower(speed);
                 motorFrontLeft.setPower(-speed);
                 motorFrontRight.setPower(speed);
-                telemetry.addData("HeadingCurrent", sensorGyro.getIntegratedZValue());
+                telemetry.addData("HeadingCurrent", getAngleFromIMU());
                 telemetry.addData("Target", targetRelativeHeading);
                 telemetry.update();
             } else break;
@@ -407,7 +460,7 @@ public class MainOpMode extends LinearOpMode {
     }
 
     public void Diagnostics() {
-        telemetry.addData("gyro", sensorGyro.getIntegratedZValue());
+        telemetry.addData("gyro", getAngleFromIMU());
         telemetry.addData("blue", colorSensor.blue());
         telemetry.addData("red", colorSensor.red());
         telemetry.update();

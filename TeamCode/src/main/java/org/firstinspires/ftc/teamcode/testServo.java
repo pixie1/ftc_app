@@ -16,7 +16,7 @@ public class testServo extends OpMode {
 
         antlerLeft = hardwareMap.servo.get("antlerLeft");
         antlerRight = hardwareMap.servo.get("antlerRight");
-        jewelKnocker = hardwareMap.servo.get("jewelKnocker");
+    //    jewelKnocker = hardwareMap.servo.get("jewelKnocker");
         jewelKnocker2 = hardwareMap.servo.get("jewelKnocker2");
     }
     double Lpos=0;
@@ -57,9 +57,9 @@ public class testServo extends OpMode {
         telemetry.addData("RightPosition",Rpos);
         telemetry.addData("jewelHitter",jewel2);
         telemetry.update();
-        jewelKnocker.setPosition(jewel);
-        antlerLeft.setPosition(Lpos);
-        antlerRight.setPosition(Rpos);
+    //    jewelKnocker.setPosition(jewel);
+       // antlerLeft.setPosition(Lpos);
+       // antlerRight.setPosition(Rpos);
         jewelKnocker2.setPosition(jewel2);
     }
 }
