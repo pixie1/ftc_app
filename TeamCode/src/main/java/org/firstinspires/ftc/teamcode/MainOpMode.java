@@ -58,13 +58,14 @@ public class MainOpMode extends LinearOpMode {
     }
 
     public void initAll() {
-//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-//        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-//        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-//        parameters.loggingEnabled      = true;
-//        parameters.loggingTag          = "IMU";
-//        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
 
         telemetry = new TelemetryImpl(this);
 
@@ -88,7 +89,9 @@ public class MainOpMode extends LinearOpMode {
         rightSide.setDirection(DcMotorSimple.Direction.REVERSE);
      //   sensorGyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("sensorGyro");
         digitalTouch = hardwareMap.get(DigitalChannel.class, "touchSensor");
+
         imu=hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
 
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -98,11 +101,6 @@ public class MainOpMode extends LinearOpMode {
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-//        sensorGyro.calibrate();
-//        while (sensorGyro.isCalibrating()) {
-//            telemetry.addData("gyro sensor is calibrating", "0");
-//            telemetry.update();
-//        }
         telemetry.addData("Initialization done", "0");
         telemetry.update();
 
@@ -115,16 +113,22 @@ public class MainOpMode extends LinearOpMode {
 
     protected void JewelGlyphParkAutoPerimeter(int color) {
 
-        RelicRecoveryVuMark vumark = vuMarkIdentification.getVuMark();
+
          jewelKnocking(color);
+        if (color==1){
+            forward(3,0.15);
+        }else  {
+            backward(3,0.15);
+        }
+        RelicRecoveryVuMark vumark = vuMarkIdentification.getVuMark();
 
         telemetry.addData("vumark", vumark);
         telemetry.update();
 
         if (color==1){
-            forward(20,0.25);
+            forward(17,0.25);
         }else  {
-            backward(20,0.25);
+            backward(17,0.25);
         }
 
         if (vumark==RelicRecoveryVuMark.RIGHT){
@@ -202,7 +206,7 @@ public class MainOpMode extends LinearOpMode {
 
     protected void lowerForklift(){
         motorForklift.setPower(-0.50);
-        sleep(2000);
+        sleep(1600);
         motorForklift.setPower(0);
     }
 
@@ -226,6 +230,7 @@ public class MainOpMode extends LinearOpMode {
                 jewelKnocker.setPosition(0.07);
                 jewelKnocker2.setPosition(1);
                 sleep(1000);
+                jewelKnocker.setPosition(.15);
                 jewelKnocker2.setPosition(.85 );
                 retractJewelKnocker();
 
@@ -234,6 +239,7 @@ public class MainOpMode extends LinearOpMode {
                 jewelKnocker.setPosition(0.07);
                 jewelKnocker2.setPosition(0);
                 sleep(1000);
+                jewelKnocker.setPosition(.15);
                 jewelKnocker2.setPosition(.75);
                 retractJewelKnocker();
 
@@ -246,6 +252,7 @@ public class MainOpMode extends LinearOpMode {
                 jewelKnocker.setPosition(0.07);
                 jewelKnocker2.setPosition(1);
                 sleep(1000);
+                jewelKnocker.setPosition(.15);
                 jewelKnocker2.setPosition(0.85);
                 retractJewelKnocker();
 
@@ -254,6 +261,7 @@ public class MainOpMode extends LinearOpMode {
                 jewelKnocker.setPosition(0.07);
                 jewelKnocker2.setPosition(0.5);
                 sleep(1000);
+                jewelKnocker.setPosition(.15);
                 jewelKnocker.setPosition(.75);
                 retractJewelKnocker();
             } else {
@@ -287,7 +295,7 @@ public class MainOpMode extends LinearOpMode {
         jewelKnocker.setPosition(0.01); //adjust a bit lower
     }
 
-    public void OpenAntlers() {
+    public void OpenAntlers()  {
         antlerLeft.setPosition(0.9);
         antlerRight.setPosition(.5);
         sleep(250);

@@ -60,8 +60,6 @@ public class MasterThroneTeleopNew extends OpMode {
 
         leftSide.setPower(0);
         rightSide.setPower(0);
-
-
     }
      double n;
      double m;
@@ -138,16 +136,16 @@ public class MasterThroneTeleopNew extends OpMode {
          }
 
          if (gamepad2.b){
-             antlerLeft.setPosition(0.75);
-             antlerLeft.setPosition(0.65);
+             antlerLeft.setPosition(0.8);
+             antlerRight.setPosition(0.6);
              leftSide.setPower(0.5);
              rightSide.setPower(0.5);
          }
 
          if (gamepad2.dpad_left) { //
-             motorBigSlide.setPower(0.75);
+             motorBigSlide.setPower(1);
          } else if(gamepad2.dpad_right) {
-             motorBigSlide.setPower(-0.75);
+             motorBigSlide.setPower(-1);
          } else {
              motorBigSlide.setPower(0);
          }
