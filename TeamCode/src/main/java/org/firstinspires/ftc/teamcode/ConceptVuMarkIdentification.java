@@ -28,8 +28,6 @@
  */
 package org.firstinspires.ftc.teamcode;
 
-
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -70,14 +68,16 @@ public class ConceptVuMarkIdentification {
 
             parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
             this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
-            telemetry.update();
+
             VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
             VuforiaTrackable relicTemplate = relicTrackables.get(0);
             relicTemplate.setName("relicVuMarkTemplate");
 
             relicTrackables.activate();
-            ElapsedTime lineLookTime = new ElapsedTime();
-            while (lineLookTime.seconds()<3) {
+
+             ElapsedTime lineLookTime = new ElapsedTime();
+
+            while (lineLookTime.seconds()<4) {
 
                 RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
                 if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
