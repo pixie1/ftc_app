@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous
 public class AutoTest extends MainOpMode {
@@ -8,7 +9,8 @@ public class AutoTest extends MainOpMode {
         int color = 1; //1 for red -1 for blue
         initAll();
         waitForStart();
-        forward(30, .5);
-        backward(30, .5);
+        while(opModeIsActive()) {
+            forward(100000,.5);
+        }
     }
 }

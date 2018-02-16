@@ -54,7 +54,7 @@ public class MainOpMode extends LinearOpMode {
     final int ENCODER_TICKS_NEVEREST = 1120;
     final double INCH_TO_CM = 2.54;
     final int WHEEL_DIAMETER = 4 *2; //in inches
-    final double SPEED=0.25;
+    final double SPEED=0.3;
     //VarsDone
 
     public MainOpMode() {
@@ -112,7 +112,7 @@ public class MainOpMode extends LinearOpMode {
         leftSide.setPower(0);
         rightSide.setPower(0);
         colorSensor.enableLed(true);
-        jewelKnocker2.setPosition(.7);
+        jewelKnocker2.setPosition(.28);
         digitalTouch.setMode(DigitalChannel.Mode.INPUT);
         waitForStart();
 
@@ -122,59 +122,59 @@ public class MainOpMode extends LinearOpMode {
 
         jewelKnocking(color);
 
-        RelicRecoveryVuMark vumark = vuMarkIdentification.getVuMark();
-        sleep(500);
-
-        telemetry.addData("vumark",vumark);
-        telemetry.update();
-        jewelKnocker.setPosition(1);
-
-        if (color==1){
-            forward(70,SPEED);
-        }else  {
-            backward(70,SPEED);
-        }
-
-        if (vumark==RelicRecoveryVuMark.RIGHT){
-            if (color==1){
-                forward(45,SPEED);
-            }else  {
-                backward(90,SPEED);
-            }
-        } else if(vumark==RelicRecoveryVuMark.LEFT){
-            if (color ==1){
-                forward(90,SPEED);
-            }else  {
-                backward(45,SPEED);
-            }
-        }else {
-            if (color==1){
-                forward(65,SPEED);
-            }else  {
-                backward(65,SPEED);
-            }
-        }
-
-        turnGyroPrecise(90, 0.15);
-        sleep(250);
-        float pos=getAngleFromIMU();
-        if (pos>90.5 || pos<89.5)
-            turnGyroPrecise((90), 0.1);
-
-
-//        motorBigSlide.setPower(0.5);
-//        sleep(1000);
-//        motorBigSlide.setPower(0);
-        lowerForklift();
-        backward(30, SPEED);
-        antlerLeft.setPosition(-1);
-        antlerRight.setPosition(-1);
-
-        //OpenAntlers();//maybe different function for all the way closed
-        pushIn();
-        forward(8, SPEED);
-        stopMotors();
-        Diagnostics();
+//        RelicRecoveryVuMark vumark = vuMarkIdentification.getVuMark();
+//        sleep(500);
+//
+//        telemetry.addData("vumark",vumark);
+//        telemetry.update();
+//        jewelKnocker.setPosition(1);
+//
+//        if (color==1){
+//            forward(70,SPEED);
+//        }else  {
+//            backward(70,SPEED);
+//        }
+//
+//        if (vumark==RelicRecoveryVuMark.RIGHT){
+//            if (color==1){
+//                forward(45,SPEED);
+//            }else  {
+//                backward(90,SPEED);
+//            }
+//        } else if(vumark==RelicRecoveryVuMark.LEFT){
+//            if (color ==1){
+//                forward(90,SPEED);
+//            }else  {
+//                backward(45,SPEED);
+//            }
+//        }else {
+//            if (color==1){
+//                forward(65,SPEED);
+//            }else  {
+//                backward(65,SPEED);
+//            }
+//        }
+//
+//        turnGyroPrecise(90, 0.15);
+//        sleep(250);
+//        float pos=getAngleFromIMU();
+//        if (pos>90.5 || pos<89.5)
+//            turnGyroPrecise((90), 0.1);
+//
+//
+////        motorBigSlide.setPower(0.5);
+////        sleep(1000);
+////        motorBigSlide.setPower(0);
+//        lowerForklift();
+//        backward(25, SPEED);
+//        antlerLeft.setPosition(-1);
+//        antlerRight.setPosition(-1);
+//
+//        //OpenAntlers();//maybe different function for all the way closed
+//        pushIn();
+//        forward(8, SPEED);
+//        stopMotors();
+//        Diagnostics();
     }
 
     protected void pushIn() {
@@ -267,53 +267,53 @@ public class MainOpMode extends LinearOpMode {
         CloseAntlers();
         raiseForklift();
         lowerJewelKnocker();
-        Diagnostics();
-        sleep(2000);
-        if (color == 1) {//THIS ONE IS FOR THE RED SIDE
-            if (colorSensor.red() > colorSensor.blue() && colorSensor.red() >= 5) {
-                telemetry.update();
-                jewelKnocker.setPosition(0.07);
-                jewelKnocker2.setPosition(1);
-                sleep(750);
-                jewelKnocker.setPosition(.15);
-                jewelKnocker2.setPosition(.8 );
-                retractJewelKnocker();
-
-            } else if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() >= 5) {
-                telemetry.update();
-                jewelKnocker.setPosition(0.07);
-                jewelKnocker2.setPosition(.4);
-                sleep(750);
-                jewelKnocker.setPosition(.15);
-                jewelKnocker2.setPosition(.6);
-                retractJewelKnocker();
-
-            } else {
-                retractJewelKnocker();
-            }
-        } else {//THIS ONE IS FOR THE BLUE SIDE
-            if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() >= 5) {
-                telemetry.update();
-                jewelKnocker.setPosition(0.07);
-                jewelKnocker2.setPosition(1);
-                sleep(750);
-                jewelKnocker.setPosition(.15);
-                jewelKnocker2.setPosition(0.8);
-                retractJewelKnocker();
-
-            } else if (colorSensor.red() > colorSensor.blue() && colorSensor.red() >= 5) {
-                telemetry.update();
-                jewelKnocker.setPosition(0.07);
-                jewelKnocker2.setPosition(0.4);
-                sleep(750);
-                jewelKnocker.setPosition(.15);
-                jewelKnocker2.setPosition(.6);
-                retractJewelKnocker();
-            } else {
-                retractJewelKnocker();
-            }
-        }
-        Diagnostics();
+//        Diagnostics();
+//        sleep(2000);
+//        if (color == 1) {//THIS ONE IS FOR THE RED SIDE
+//            if (colorSensor.red() > colorSensor.blue() && colorSensor.red() >= 5) {
+//                telemetry.update();
+//                jewelKnocker.setPosition(0.07);
+//                jewelKnocker2.setPosition(.5);
+//                sleep(750);
+//                jewelKnocker.setPosition(.15);
+//                jewelKnocker2.setPosition(.34 );
+//                retractJewelKnocker();
+//
+//            } else if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() >= 5) {
+//                telemetry.update();
+//                jewelKnocker.setPosition(0.07);
+//                jewelKnocker2.setPosition(.0);
+//                sleep(750);
+//                jewelKnocker.setPosition(.15);
+//                jewelKnocker2.setPosition(.24);
+//                retractJewelKnocker();
+//
+//            } else {
+//                retractJewelKnocker();
+//            }
+//        } else {//THIS ONE IS FOR THE BLUE SIDE
+//            if (colorSensor.blue() > colorSensor.red() && colorSensor.blue() >= 5) {
+//                telemetry.update();
+//                jewelKnocker.setPosition(0.07);
+//                jewelKnocker2.setPosition(.5);
+//                sleep(750);
+//                jewelKnocker.setPosition(.15);
+//                jewelKnocker2.setPosition(0.34);
+//                retractJewelKnocker();
+//
+//            } else if (colorSensor.red() > colorSensor.blue() && colorSensor.red() >= 5) {
+//                telemetry.update();
+//                jewelKnocker.setPosition(0.07);
+//                jewelKnocker2.setPosition(0);
+//                sleep(750);
+//                jewelKnocker.setPosition(.15);
+//                jewelKnocker2.setPosition(.24);
+//                retractJewelKnocker();
+//            } else {
+//                retractJewelKnocker();
+//            }
+//        }
+//        Diagnostics();
     }
 
 
@@ -321,29 +321,32 @@ public class MainOpMode extends LinearOpMode {
         sleep(750);
         telemetry.update();
         motorBigSlide.setPower(-1);//TODO adjust values
-        sleep(850);
+        sleep(950);
         jewelKnocker.setPosition(1);//TODO tune value so jewel lowerer goes back
         sleep(500);
+        motorBigSlide.setPower(1);
+        sleep(1200);
         motorBigSlide.setPower(0);
         jewelKnocker.setPosition(1);
-        jewelKnocker2.setPosition(0.7);
+        jewelKnocker2.setPosition(0.29);
 
-        sleep(1000);
-        motorBigSlide.setPower(1);
-        sleep(450);
-        motorBigSlide.setPower(0);
+//        sleep(1000);
+//        motorBigSlide.setPower(1);
+//        sleep(450);
+//        motorBigSlide.setPower(0);
     }
 
     protected void  lowerJewelKnocker(){
         motorBigSlide.setPower(-1);
-        sleep(750);
+        sleep(850);
         motorBigSlide.setPower(0);
-        jewelKnocker.setPosition(0.15); //lower jewel knocker
-        sleep(1000);
+        jewelKnocker.setPosition(0.10); //lower jewel knocker
+        sleep(1100);
         motorBigSlide.setPower(1);//move knocker between jewels
-        sleep(750);
+        sleep(950);
         motorBigSlide.setPower(0);
-        jewelKnocker.setPosition(0.01); //adjust a bit lower
+        sleep(1000);
+        jewelKnocker.setPosition(0.05); //adjust a bit lower
     }
 
     public void OpenAntlers()  {
