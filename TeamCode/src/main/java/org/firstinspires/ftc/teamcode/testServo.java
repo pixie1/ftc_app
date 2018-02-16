@@ -20,14 +20,14 @@ public class testServo extends OpMode {
         antlerRight = hardwareMap.servo.get("antlerRight");
         antlerLeft2 = hardwareMap.servo.get("antlerLeft2");
         antlerRight2 = hardwareMap.servo.get("antlerRight2");
-    //    jewelKnocker = hardwareMap.servo.get("jewelKnocker");
+        jewelKnocker = hardwareMap.servo.get("jewelKnocker");
         jewelKnocker2 = hardwareMap.servo.get("jewelKnocker2");
     }
     double Lpos=0;
     double Rpos=0;
     double L2pos=0;
     double R2pos=0;
-    double jewel=0;
+    double jewel=1;
     double jewel2=0.8;
 
     boolean pressed2X=false;
@@ -47,7 +47,7 @@ public class testServo extends OpMode {
     public void loop() {
 
         if(gamepad2.x && !pressed2X){
-            jewel=jewel+0.1;
+            jewel=jewel-0.1;
             pressed2X=true;
         }
         if(gamepad2.y){
@@ -62,6 +62,7 @@ public class testServo extends OpMode {
             isPressedDR = false;
             isPressedDU = false;
             isPressedDD = false;
+            pressed2X=false;
         }
         if (gamepad2.right_bumper && !isPressed2rb) {
             Rpos=Rpos+0.1;
@@ -122,11 +123,11 @@ public class testServo extends OpMode {
         telemetry.addData("LeftPosition2",L2pos);
         telemetry.addData("RightPosition2",R2pos);
         telemetry.update();
-    //    jewelKnocker.setPosition(jewel);
-        antlerRight.setPosition(Lpos);
+       jewelKnocker.setPosition(jewel);
+      //  antlerRight.setPosition(Lpos);
 //        antlerRight.setPosition(Rpos);
 //        antlerLeft2.setPosition(L2pos);
 //        antlerRight2.setPosition(R2pos);
-        jewelKnocker2.setPosition(jewel2);
+      //  jewelKnocker2.setPosition(jewel2);
     }
 }

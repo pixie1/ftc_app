@@ -195,12 +195,6 @@ public class MasterThroneTeleopNew extends OpMode {
              motorForklift.setPower(0);
          }
 
-         //open intake off
-         //almost close- intake on
-         //fully close - intake off
-         //button for intake send out
-
-
          telemetry.addData("Forklift Encoder", motorForklift.getCurrentPosition());
    }
 
