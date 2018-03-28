@@ -13,4 +13,22 @@ public class  JewelGlyphParkAutoBluePerimeter extends MainOpMode {
             stopEverything();
         }
     }
+
+    protected void  lowerJewelKnocker(){
+        motorBigSlide.setPower(-1);
+        sleep(850);
+        motorBigSlide.setPower(0);
+//        jewelKnocker.setPosition(0.4);
+//        sleep(2500);
+        jewelKnocker.setPosition(0.1); //lower jewel knocker
+        sleep(1000);
+        motorBigSlide.setPower(1);//move knocker between jewels
+        sleep(500);
+        motorBigSlide.setPower(0);
+        jewelKnocker.setPosition(0); //adjust a bit lower
+        motorBigSlide.setPower(1);//move knocker between jewels
+        sleep(100);
+        motorBigSlide.setPower(0);
+    }
+
 }

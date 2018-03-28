@@ -14,17 +14,15 @@
 public class MasterThroneTeleopNew extends OpMode {
 
     DcMotor motorFrontRight;
-    DcMotor motorFrontLeft;
-    DcMotor motorBackRight;
-    DcMotor motorBackLeft;
+     DcMotor motorFrontLeft;
+     DcMotor motorBackRight;
+     DcMotor motorBackLeft;
     DcMotor motorForklift;
-    DcMotor motorBigSlide;
      DcMotor leftSide;
      DcMotor rightSide;
 
     Servo antlerLeft;
     Servo antlerRight;
-    Servo jewelKnocker;
      Servo antlerLeft2;
      Servo antlerRight2;
 
@@ -41,7 +39,6 @@ public class MasterThroneTeleopNew extends OpMode {
         motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         motorForklift = hardwareMap.dcMotor.get("motorForklift");
-        motorBigSlide = hardwareMap.dcMotor.get("motorBigSlide");
         leftSide=hardwareMap.dcMotor.get("leftSide");
         rightSide = hardwareMap.dcMotor.get("rightSide");
 
@@ -49,7 +46,6 @@ public class MasterThroneTeleopNew extends OpMode {
         antlerRight = hardwareMap.servo.get("antlerRight");
         antlerRight2= hardwareMap.servo.get("antlerRight2");
         antlerLeft2= hardwareMap.servo.get("antlerLeft2");
-        jewelKnocker = hardwareMap.servo.get("jewelKnocker");
 
         touchSensor = hardwareMap.get(DigitalChannel.class, "touchSensor");
         touchSensor.setMode(DigitalChannel.Mode.INPUT);
@@ -80,28 +76,28 @@ public class MasterThroneTeleopNew extends OpMode {
          telemetry.addData("leftstick", leftValue);
          telemetry.addData("rightstick", rightValue);
          if(rightValue >= leftValue){
-             n = (((-gamepad1.right_stick_x + gamepad1.right_stick_y))*.5);
-             m = ((-(gamepad1.right_stick_y + gamepad1.right_stick_x))*.5);
+             n = (((-gamepad1.right_stick_x + gamepad1.right_stick_y))*.4);
+             m = ((-(gamepad1.right_stick_y + gamepad1.right_stick_x))*.4);
              telemetry.addData("n (rightspeed)", n);
              telemetry.addData("m (leftspeed", m);
          } if(leftValue > rightValue){
-            n = (((-gamepad1.left_stick_x + gamepad1.left_stick_y))/.8);
-             m = ((-(gamepad1.left_stick_y + gamepad1.left_stick_x))/.8);
+            n = (((-gamepad1.left_stick_x + gamepad1.left_stick_y)));
+             m = ((-(gamepad1.left_stick_y + gamepad1.left_stick_x)));
              telemetry.addData("n (rightspeed)", n);
              telemetry.addData("m (leftspeed", m);
          }
-         if (gamepad1.x) {
-            sc = 1;
-             telemetry.addData("sc", sc);
-         }
-         if (gamepad1.a) {
-             sc = 0.5;
-             telemetry.addData("sc", sc);
-         }
-         if (gamepad1.y) {
-             sc = 0.1;
-             telemetry.addData("sc", sc);
-         }
+//         if (gamepad1.x) {
+//            sc = 1;
+//             telemetry.addData("sc", sc);
+//         }
+//         if (gamepad1.a) {
+//             sc = 0.5;
+//             telemetry.addData("sc", sc);
+//         }
+//         if (gamepad1.y) {
+//             sc = 0.1;
+//             telemetry.addData("sc", sc);
+//         }
 
         motorFrontRight.setPower(Math.min(n*sc,0.8));
         motorBackRight.setPower(Math.min(n*sc,0.8));
@@ -160,19 +156,7 @@ public class MasterThroneTeleopNew extends OpMode {
              rightSide.setPower(1);
          }
 
-         if (gamepad2.dpad_left) { //
-             motorBigSlide.setPower(1);
-         } else if(gamepad2.dpad_right) {
-             motorBigSlide.setPower(-1);
-         } else {
-             motorBigSlide.setPower(0);
-         }
-         if (gamepad1.left_bumper) {
-             jewelKnocker.setPosition(1);
-         }
-         if (gamepad1.left_trigger>0){
-             jewelKnocker.setPosition(0);
-         }
+//
          if (gamepad2.left_bumper){
                leftSide.setPower(1);
              rightSide.setPower(1);
