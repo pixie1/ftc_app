@@ -29,7 +29,7 @@
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -80,7 +80,7 @@ import java.util.List;
  * is explained below.
  */
 
-@Autonomous(name="Concept: Vuforia Navigation", group ="Concept")
+@TeleOp(name="Concept: Vuforia Navigation", group ="Concept")
 @Disabled
 public class ConceptVuforiaNavigation extends LinearOpMode {
 
@@ -115,9 +115,9 @@ public class ConceptVuforiaNavigation extends LinearOpMode {
          * random data. As an example, here is a example of a fragment of a valid key:
          *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
          * Once you've obtained a license key, copy the string from the Vuforia web site
-         * and paste it in to your code onthe next line, between the double quotes.
+         * and paste it in to your code on the next line, between the double quotes.
          */
-        parameters.vuforiaLicenseKey = "Afybn4b/////AAAAme6SK51nqUjXr1qr5G1T8JRANUg6dNZUfFVyYO/1aRd7z1xI9sD73+VpF1reTDqH0pQzhBAM1OXKP1iruKq0TusEDYkwrVrl0fiE6CrmnAjaQYdB2FS0owvvItj0CsF4EoDRvnYZ/RRB2K/QF0IXsPLGSj01ZZjy1I9ohA7Ezh8giozOa58s6SNOsTy7l2XcpngDTq/gA2IoKHOXuxh9SpiMMHrTsdUgsASbezArVlfoNpWOjpljpBb26heqgnsHWBaNvlkf/t6EHCVxiv0HZASLQ/5hlDbWN2Cm2I8+vpWOsdVoX/NQNyVPvcf5/QEUbly+Ntw65WNTMCn0QmmrJvxOzYgAvIiJIxBr+EZLOFZR";
+        parameters.vuforiaLicenseKey = " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
 
         /*
          * We also indicate which camera on the RC that we wish to use.
@@ -125,7 +125,11 @@ public class ConceptVuforiaNavigation extends LinearOpMode {
          * for a competition robot, the front camera might be more convenient.
          */
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+
+        /**
+         * Instantiate the Vuforia engine
+         */
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         /**
          * Load the data sets that for the trackable objects we wish to track. These particular data
