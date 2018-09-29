@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 
 @TeleOp(name = "mecanumWheelTest")
@@ -28,36 +29,32 @@ public class mecanumWheelTest extends OpMode {
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    double rightN;
-    double rightM;
-    double leftN;
-    double leftM;
-    double leftValue;
-    double rightValue;
+    double N;
+    double M;
+    double turn = 1 ;
+
 
     @Override
     public void loop() {
-        leftValue = Math.abs(gamepad1.left_stick_x) + Math.abs(gamepad1.left_stick_y);
-        rightValue = Math.abs(gamepad1.right_stick_x) + Math.abs(gamepad1.right_stick_y);
-        telemetry.addData("leftstick", leftValue);
-        telemetry.addData("rightstick", rightValue);
-
-            rightN = (((-gamepad1.right_stick_x + gamepad1.right_stick_y)) * .4);
-            rightM = ((-(gamepad1.right_stick_y + gamepad1.right_stick_x)) * .4);
-//            telemetry.addData("n (rightspeed)", rightN);
-//            telemetry.addData("m (leftspeed", rightM);
-
-
-            leftN = (((-gamepad1.left_stick_x + gamepad1.left_stick_y)));
-            leftM = ((-(gamepad1.left_stick_y + gamepad1.left_stick_x)));
-//            telemetry.addData("n (rightspeed)", leftN);
-//            telemetry.addData("m (leftspeed", leftM);
-
-        motorFrontRight.setPower(Math.min(rightM,0.8));
-        motorBackRight.setPower(Math.min(rightN,0.8));
-        motorFrontLeft.setPower(Math.min(leftN,0.8));
-        motorBackLeft.setPower(Math.min(leftM,0.8));
+        if (gamepad1.right_stick_x!=0 || gamepad1.right_stick_y!=0) {
+            turn = -1;
+            N = (((-gamepad1.right_stick_x+ gamepad1.right_stick_y)));
+            M = (((gamepad1.right_stick_y + gamepad1.right_stick_x)));
+        }
+        else{
+            turn = 1;
+            N = (((-gamepad1.left_stick_x + gamepad1.left_stick_y))*.5);
+            M = (((gamepad1.left_stick_y + gamepad1.left_stick_x))*.5);
+        }
+        
+        motorFrontRight.setPower(Math.min(M,1));
+        motorBackRight.setPower(Math.min(N,1));
+        motorFrontLeft.setPower(Math.min(N*turn,1));
+        motorBackLeft.setPower(Math.min(M*turn,1));
     }
 }

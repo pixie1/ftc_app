@@ -99,10 +99,10 @@ public class MasterThroneTeleopNew extends OpMode {
 //             telemetry.addData("sc", sc);
 //         }
 
-        motorFrontRight.setPower(Math.min(n*sc,0.8));
-        motorBackRight.setPower(Math.min(n*sc,0.8));
-        motorFrontLeft.setPower(Math.min(m*sc,0.8));
-        motorBackLeft.setPower(Math.min(m*sc,0.8));
+        motorFrontRight.setPower(Math.min(n*sc,0.6));
+        motorBackRight.setPower(Math.min(n*sc,0.6));
+        motorFrontLeft.setPower(Math.min(m*sc,0.6));
+        motorBackLeft.setPower(Math.min(m*sc,0.6));
 
          if (gamepad2.a) { //closing left
              leftSide.setPower(0);
