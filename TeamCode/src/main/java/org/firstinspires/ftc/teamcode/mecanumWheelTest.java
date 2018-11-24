@@ -33,11 +33,9 @@ public class mecanumWheelTest extends OpMode {
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
     }
-
     double N;
     double M;
     double turn = 1 ;
-
 
     @Override
     public void loop() {

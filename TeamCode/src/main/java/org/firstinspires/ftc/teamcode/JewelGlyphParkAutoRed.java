@@ -8,7 +8,7 @@ public class JewelGlyphParkAutoRed extends MainOpMode {
         try {
             int color = 1; //1 for red -1 for blue
             initAll();
-            JewelGlyphParkAuto(color);
+           // JewelGlyphParkAuto(color);
         }finally {
             stopEverything();
         }

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-@TeleOp
+@TeleOp (name = "testMotor", group="testPrograms")
 public class testMotor extends OpMode {
     DcMotor motorFrontRight;
     DcMotor motorFrontLeft;

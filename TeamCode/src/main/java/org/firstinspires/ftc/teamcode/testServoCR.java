@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "testServoCR")
+@TeleOp(name = "testServoCR", group="testPrograms")
 public class testServoCR extends OpMode {
 
     CRServo leftSide;

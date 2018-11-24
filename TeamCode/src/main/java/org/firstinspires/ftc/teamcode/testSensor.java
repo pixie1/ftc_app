@@ -3,7 +3,7 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
-@TeleOp
+@TeleOp(name = "testSensor", group="testPrograms")
 public class testSensor extends MainOpMode {
     ModernRoboticsI2cGyro sensorGyro;
     ColorSensor colorSensor;
