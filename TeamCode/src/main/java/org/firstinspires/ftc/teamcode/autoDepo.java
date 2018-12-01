@@ -12,12 +12,21 @@ public class autoDepo extends MainOpMode{
        try{
            initAll();
            //lowerRobot();
-           findGold();
-           driveToCorner();
-           expellTeamMarker();
+        SamplingOrderDetector.GoldLocation goldLocation= findGold();
+           super.driveToCorner(goldLocation);
+           //expellTeamMarker();
 
        }finally {
            stopEverything();
        }
    }
+
+    public void expellTeamMarker(){
+        //motorIntakeHinge.setPower(1);
+        //motorIntake.setPower(1);
+        sleep(1000);
+        //motorIntakeHinge.setPower(0);
+        sleep(1000);
+        //motorIntake.setPower(0);
+    }
 }

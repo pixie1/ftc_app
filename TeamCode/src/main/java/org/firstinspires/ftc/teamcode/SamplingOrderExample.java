@@ -84,6 +84,7 @@ public class SamplingOrderExample extends OpMode
 
     @Override
     public void loop() {
+        telemetry.addData("gold", detector.gold==null?"null":detector.gold.toString());
         telemetry.addData("size of picture", detector.getSize());
         telemetry.addData("Current Order" , detector.getCurrentOrder().toString()); // The current result for the frame
         telemetry.addData("Last Order" , detector.getLastOrder().toString()); // The last known result

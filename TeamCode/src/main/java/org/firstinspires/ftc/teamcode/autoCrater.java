@@ -17,4 +17,13 @@ public class autoCrater extends MainOpMode {
             stopEverything();
         }
     }
+
+    public void intoCrater(){
+        //motorExtend.setPower(.75);
+        //motorIntakeHinge.setPower(1);
+        sleep(1000);
+        //motorIntakeHinge.setPower(0);
+        sleep(1000);
+        //motorExtend.setPower(0);
+    }
 }

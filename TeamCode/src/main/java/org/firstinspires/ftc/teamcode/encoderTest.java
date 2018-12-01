@@ -40,21 +40,29 @@ public class encoderTest extends OpMode {
     public void loop() {
         if (gamepad2.y){
             motorFrontRight.setPower(.25);
+        } else {
+            motorFrontRight.setPower(0);
         }
         if (gamepad2.x){
             motorFrontLeft.setPower(.25);
+        } else {
+            motorFrontLeft.setPower(0);
         }
         if (gamepad2.b){
-            motorFrontRight.setPower(.25);
+            motorBackLeft.setPower(.25);
+        } else {
+            motorBackLeft.setPower(0);
         }
         if (gamepad2.a){
-            motorFrontRight.setPower(.25);
+            motorBackRight.setPower(.25);
+        } else {
+            motorBackRight.setPower(0);
         }
 
-        motorFrontRight.setPower(Math.min(FR,1));
-        motorBackRight.setPower(Math.min(BR,1));
-        motorFrontLeft.setPower(Math.min(FL,1));
-        motorBackLeft.setPower(Math.min(BL,1));
+//        motorFrontRight.setPower(Math.min(FR,1));
+//        motorBackRight.setPower(Math.min(BR,1));
+//        motorFrontLeft.setPower(Math.min(FL,1));
+//        motorBackLeft.setPower(Math.min(BL,1));
 
         telemetry.addData("motorFrontRight Encoder", motorFrontRight.getCurrentPosition());
         telemetry.addData("motorFrontLeft Encoder", motorFrontLeft.getCurrentPosition());

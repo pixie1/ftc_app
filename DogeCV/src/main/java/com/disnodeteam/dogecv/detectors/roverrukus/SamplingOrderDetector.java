@@ -38,7 +38,9 @@ public class SamplingOrderDetector extends DogeCVDetector {
         RIGHT
     }
 
-
+    private final int CROP_HEIGHT_TOP= 230;
+    private final int CROP_HEIGHT_BOTTOM=0;
+    private final int CROP_LENGTH= 480;
     public DogeCV.AreaScoringMethod areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA;
 
     public RatioScorer ratioScorer = new RatioScorer(1.0,5);
@@ -61,15 +63,18 @@ public class SamplingOrderDetector extends DogeCVDetector {
     private Mat hiarchy     = new Mat();
     private Mat structure   = new Mat();
 
+    public Rect gold;
+    public List<Rect> silver;
+
     private Size stretchKernal = new Size(10,10);
     private Size newSize = new Size();
 
     protected Size inputSize;
 
-    int topY = 230; //these are the cropping point values
+    int topY = CROP_HEIGHT_TOP; //these are the cropping point values
     int leftX = 0; //combine a top/bottom with a left/right and you got a point
-    int bottomY = 100;
-    int rightX = 480;
+    int bottomY = CROP_HEIGHT_BOTTOM;
+    int rightX = CROP_LENGTH;
 
     Point topLeft = new Point(leftX, topY); // declaring crop rectangle points
     Point bottomRight = new Point(rightX, bottomY);
@@ -198,6 +203,7 @@ public class SamplingOrderDetector extends DogeCVDetector {
 
         }
 
+        gold= chosenYellowRect;
         if(chosenYellowRect != null){
             Imgproc.rectangle(workingMat,
                     new Point(chosenYellowRect.x, chosenYellowRect.y),
@@ -213,7 +219,7 @@ public class SamplingOrderDetector extends DogeCVDetector {
                     2);
 
         }
-
+        silver= choosenWhiteRect;
         if(choosenWhiteRect != null){
             for(int i=0;i<choosenWhiteRect.size();i++){
                 Rect rect = choosenWhiteRect.get(i);
@@ -229,11 +235,10 @@ public class SamplingOrderDetector extends DogeCVDetector {
                         1.3,
                         new Scalar(255, 255, 255),
                         2);
-
             }
         }
 
-        if(choosenWhiteRect.size() >= 2 && chosenYellowRect != null){
+        if(choosenWhiteRect.size() >= 1 && chosenYellowRect != null){
             int leftCount = 0;
             for(int i=0;i<choosenWhiteRect.size();i++){
                 Rect rect = choosenWhiteRect.get(i);
@@ -252,7 +257,16 @@ public class SamplingOrderDetector extends DogeCVDetector {
             isFound = true;
             lastOrder = currentOrder;
 
-        }if (chosenYellowRect == null) {
+        } else if (choosenWhiteRect.size() == 0 && chosenYellowRect != null) {
+            if (chosenYellowRect.x >= CROP_LENGTH/2){
+                currentOrder = SamplingOrderDetector.GoldLocation.LEFT;
+            } else {
+                currentOrder = SamplingOrderDetector.GoldLocation.CENTER;
+            }
+            isFound = true;
+            lastOrder = currentOrder;
+
+        } else if (chosenYellowRect == null) {
             currentOrder = SamplingOrderDetector.GoldLocation.RIGHT;
             isFound = true;
             lastOrder = currentOrder;
@@ -293,6 +307,6 @@ public class SamplingOrderDetector extends DogeCVDetector {
     }
 
     public String getSize(){
-        return inputSize.toString();
+        return inputSize!=null? inputSize.toString():"null";
     }
 }
