@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.disnodeteam.dogecv.detectors.roverrukus.SamplingOrderDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous
@@ -10,20 +11,21 @@ public class autoCrater extends MainOpMode {
         try {
             initAll();
             lowerRobot();
-            findGold();
-            driveToCorner();
+            SamplingOrderDetector.GoldLocation goldLocation= findGold();
+            attackMineral(goldLocation);
+            super.driveToCorner(goldLocation);
+            forward(50, SLOW_SPEED);
+//            turnGyroPrecise(90, SLOW_SPEED);
+//            forward(50, SLOW_SPEED);
+//            turnGyroPrecise(180-45, SLOW_SPEED);
+//            forward(150, SLOW_SPEED);
+//            expellTeamMarker();
+//            backward(50, SLOW_SPEED);
+//            turnGyroPrecise(-180+45, SLOW_SPEED);
+//            forward(150, SLOW_SPEED);
             intoCrater();
         } finally {
             stopEverything();
         }
-    }
-
-    public void intoCrater(){
-        //motorExtend.setPower(.75);
-        //motorIntakeHinge.setPower(1);
-        sleep(1000);
-        //motorIntakeHinge.setPower(0);
-        sleep(1000);
-        //motorExtend.setPower(0);
     }
 }

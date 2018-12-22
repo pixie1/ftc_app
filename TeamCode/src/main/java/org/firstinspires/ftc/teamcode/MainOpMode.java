@@ -32,8 +32,8 @@ public class MainOpMode extends LinearOpMode {
     DcMotor motorBackLeft;
     DcMotor motorLift;
 //    DcMotor motorExtend;
-     DcMotor motorIntakeHinge;
-//    DcMotor motorIntake;
+    DcMotor motorIntakeHinge;
+    DcMotor motorIntake;
 
     CRServo hook;
 
@@ -51,8 +51,10 @@ public class MainOpMode extends LinearOpMode {
     final double INCH_TO_CM = 2.54;
     final int WHEEL_DIAMETER = 4 *2; //in inches
     final double SPEED=0.1;
+    final double SLOW_SPEED=.05;
+    final double TURN_SPEED=.05;
     //VarsDone
-    final int TURN_ANGLE = 15;
+    final int TURN_ANGLE = 30;
 
     public MainOpMode() {
     }
@@ -74,8 +76,8 @@ public class MainOpMode extends LinearOpMode {
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         motorLift = hardwareMap.dcMotor.get("motorLift");
 //        motorExtend = hardwareMap.dcMotor.get("motorExtend");
-        //motorIntakeHinge = hardwareMap.dcMotor.get("motorIntakeHinge");
-//        motorIntake = hardwareMap.dcMotor.get("motorIntake");
+        motorIntakeHinge = hardwareMap.dcMotor.get("motorIntakeHinge");
+        motorIntake = hardwareMap.dcMotor.get("motorIntake");
 
         hook = hardwareMap.crservo.get("hook");
 
@@ -83,13 +85,14 @@ public class MainOpMode extends LinearOpMode {
         imu.initialize(parameters);
 
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        //motorIntakeHinge.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorIntakeHinge.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorIntakeHinge.setPower(0);
         telemetry.addData("Status", "DogeCV 2018.0 - Sampling Order Example");
 
         detector = new SamplingOrderDetector();
@@ -105,17 +108,25 @@ public class MainOpMode extends LinearOpMode {
 
         detector.ratioScorer.weight = 15;
         detector.ratioScorer.perfectRatio = 1.0;
-//
-//        telemetry.addData("push A","0");
 
-//        while (a == 0){
-//            if (gamepad2.a){
-//                hook.setPower(.5);
-//                sleep(3000);
-//                hook.setPower(0);
-//                a++;
-//            }
-//        }
+        telemetry.addData("Do hanging adjustments now","0");
+        telemetry.update();
+
+        while (a == 0){
+            if (gamepad2.a){
+                hook.setPower(.5);
+            } else {
+                hook.setPower(0);
+            }
+            if (gamepad2.b){
+                motorLift.setPower(.75);
+            } else {
+                motorLift.setPower(0);
+            }
+            if (gamepad2.x){
+                a++;
+            }
+        }
 
         telemetry.addData("Initialization done", "0");
         telemetry.update();
@@ -165,7 +176,7 @@ public class MainOpMode extends LinearOpMode {
         motorBackLeft.setPower(speed);
         motorBackRight.setPower(speed);
         while (opModeIsActive() && Math.abs(Math.abs(motorFrontRight.getCurrentPosition()) - Math.abs(current)) < Math.abs(disInEncoderTicks)) {
-             telemetry.  addData("Centimeters:", disInCm);
+            telemetry.  addData("Centimeters:", disInCm);
             telemetry.addData("Encoder Ticks:", disInEncoderTicks);
             telemetry.addData("Left Encoder at:", motorFrontLeft.getCurrentPosition());
             telemetry.addData("Right Encoder at:", motorFrontRight.getCurrentPosition());
@@ -299,35 +310,46 @@ public class MainOpMode extends LinearOpMode {
       sleep(1000);
         telemetry.addData("location", goldLocation.toString());
         telemetry.update();
-        if (goldLocation == SamplingOrderDetector.GoldLocation.LEFT){
-
-            turnGyroPrecise(TURN_ANGLE,.05);
-            forward(20,SPEED);
-        } else if (goldLocation == SamplingOrderDetector.GoldLocation.RIGHT){
-            turnGyroPrecise(-TURN_ANGLE,.05);
-            forward(20,SPEED);
-        } else {
-            goldLocation=SamplingOrderDetector.GoldLocation.CENTER;
-            forward(30,SPEED);
-        }
 
         return goldLocation;
+    }
+
+    public void attackMineral(SamplingOrderDetector.GoldLocation goldLocation){
+        forward (5, SPEED);
+        if (goldLocation == SamplingOrderDetector.GoldLocation.LEFT){
+            turnGyroPrecise(TURN_ANGLE,TURN_SPEED);
+            forward(45,SLOW_SPEED);
+        } else if (goldLocation == SamplingOrderDetector.GoldLocation.RIGHT){
+            turnGyroPrecise(-TURN_ANGLE,TURN_SPEED);
+            forward(45,SLOW_SPEED);
+        } else {
+            goldLocation=SamplingOrderDetector.GoldLocation.CENTER;
+            forward(45,SPEED);
+        }
+
     }
 
     public void driveToCorner(SamplingOrderDetector.GoldLocation goldLocation){
 
         if (goldLocation==SamplingOrderDetector.GoldLocation.CENTER){
-            forward(15,SPEED);
-        } else {
-            float angle = getAngleFromIMU();
-            if (angle == TURN_ANGLE) {
-                turnGyroPrecise(-TURN_ANGLE, .05);
-            } else if (angle == -TURN_ANGLE) {
-                turnGyroPrecise(TURN_ANGLE, .05);
-            }
-            turnGyroPrecise(0, .05);
-            forward(5, SPEED);
+//            forward(1,SPEED);
+        } else if (goldLocation == SamplingOrderDetector.GoldLocation.LEFT) {
+            turnGyroPrecise(-TURN_ANGLE, TURN_SPEED);
+        } else if (goldLocation == SamplingOrderDetector.GoldLocation.RIGHT){
+            turnGyroPrecise(TURN_ANGLE, TURN_SPEED);
         }
+        forward(10, SLOW_SPEED);
+    }
+
+    public void intoCrater(){
+        motorIntakeHinge.setPower(.5);
+        sleep(1000);
+        motorIntakeHinge.setPower(0);
+    }
+    public void expellTeamMarker(){
+        motorIntakeHinge.setPower(-.75);
+        sleep(5000);
+        motorIntakeHinge.setPower(0);
     }
 
     @Override
@@ -340,8 +362,8 @@ public class MainOpMode extends LinearOpMode {
         motorBackLeft.setPower(0);
         motorFrontLeft.setPower(0);
         motorLift.setPower(0);
-        //motorIntakeHinge.setPower(0);
-        //motorIntake.setPower(0);
+        motorIntakeHinge.setPower(0);
+        motorIntake.setPower(0);
         //motorExtend.setPower(0);
         hook.setPower(0);
     }

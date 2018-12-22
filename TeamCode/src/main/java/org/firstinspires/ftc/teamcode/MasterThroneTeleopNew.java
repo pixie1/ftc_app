@@ -18,8 +18,12 @@ public class MasterThroneTeleopNew extends OpMode {
     DcMotor motorBackRight;
     DcMotor motorBackLeft;
     DcMotor motorLift;
+    //    DcMotor motorExtend;
+    DcMotor motorIntakeHinge;
+    DcMotor motorIntake;
 
-    CRServo hook;
+
+     CRServo hook;
 
     public MasterThroneTeleopNew() {
     }
@@ -38,6 +42,11 @@ public class MasterThroneTeleopNew extends OpMode {
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //        motorExtend = hardwareMap.dcMotor.get("motorExtend");
+        motorIntakeHinge = hardwareMap.dcMotor.get("motorIntakeHinge");
+        motorIntake = hardwareMap.dcMotor.get("motorIntake");
+
+        motorIntakeHinge.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         hook.setPower(0);
     }
@@ -60,8 +69,8 @@ public class MasterThroneTeleopNew extends OpMode {
              telemetry.addData("m (leftspeed", m);
          }
          if (leftValue > rightValue) {
-             n = (((-gamepad1.left_stick_x + gamepad1.left_stick_y)));
-             m = ((-(gamepad1.left_stick_y + gamepad1.left_stick_x)));
+             n = (((-gamepad1.left_stick_x + gamepad1.left_stick_y))*.6);
+             m = ((-(gamepad1.left_stick_y + gamepad1.left_stick_x))*.6);
              telemetry.addData("n (rightspeed)", n);
              telemetry.addData("m (leftspeed", m);
          }
@@ -72,9 +81,9 @@ public class MasterThroneTeleopNew extends OpMode {
          motorBackLeft.setPower(Math.min(m, 0.75));
 
 
-         if (gamepad2.dpad_up) {
+         if (gamepad2.right_bumper) {
              motorLift.setPower(.75);
-         } else if (gamepad2.dpad_down) {
+         } else if (gamepad2.right_trigger>0) {
              motorLift.setPower(-.5);
          } else {
              motorLift.setPower(0);
@@ -86,6 +95,22 @@ public class MasterThroneTeleopNew extends OpMode {
              hook.setPower(-.5);
          } else {
              hook.setPower(0);
+         }
+
+         if (gamepad2.x){
+             motorIntake.setPower(1);
+         } else if (gamepad2.y){
+             motorIntake.setPower(-1);
+         } else {
+             motorIntake.setPower(0);
+         }
+
+         if (gamepad2.left_bumper){
+             motorIntakeHinge.setPower(.75);
+         } else if (gamepad2.left_trigger>0){
+             motorIntakeHinge.setPower(-.75);
+         } else {
+             motorIntakeHinge.setPower(0);
          }
 
      }

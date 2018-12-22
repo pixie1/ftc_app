@@ -11,22 +11,20 @@ public class autoDepo extends MainOpMode{
    public void runOpMode(){
        try{
            initAll();
-           //lowerRobot();
-        SamplingOrderDetector.GoldLocation goldLocation= findGold();
-           super.driveToCorner(goldLocation);
-           //expellTeamMarker();
-
+           lowerRobot();
+//           SamplingOrderDetector.GoldLocation goldLocation = findGold();
+//           attackMineral(goldLocation);
+//           super.driveToCorner(goldLocation);
+           forward(50,SLOW_SPEED);
+           expellTeamMarker();
+//           turnGyroPrecise(180-45, SLOW_SPEED);
+//           forward(200, SLOW_SPEED);
+//           intoCrater();
        }finally {
            stopEverything();
        }
    }
 
-    public void expellTeamMarker(){
-        //motorIntakeHinge.setPower(1);
-        //motorIntake.setPower(1);
-        sleep(1000);
-        //motorIntakeHinge.setPower(0);
-        sleep(1000);
-        //motorIntake.setPower(0);
-    }
+
+
 }

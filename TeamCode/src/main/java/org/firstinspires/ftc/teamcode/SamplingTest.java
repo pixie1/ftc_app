@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryImpl;
 import org.opencv.core.Rect;
 
-@Autonomous
+@Autonomous (name = "samplingTest", group="testPrograms")
 public class SamplingTest extends LinearOpMode {
 
 

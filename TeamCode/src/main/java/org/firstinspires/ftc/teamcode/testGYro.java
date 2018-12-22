@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -15,11 +16,21 @@ public class testGYro extends MainOpMode {
     @Override
     public void runOpMode() {
         initAll();
-
         waitForStart();
         while(opModeIsActive()){
-            telemetry.addData("HeadingCurrent", getAngleFromIMU()  );
+            telemetry.addData("HeadingCurrentX", getAngleFromIMU());
+            telemetry.addData("HeadingCurrentY", getAngleFromIMUY());
+            telemetry.addData("HeadingCurrentZ", getAngleFromIMUZ());
             telemetry.update();
         }
+    }
+
+    public float getAngleFromIMUY(){
+        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XZY, AngleUnit.DEGREES);
+        return angles.firstAngle;
+    }
+    public float getAngleFromIMUZ(){
+        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
+        return angles.firstAngle;
     }
 }
