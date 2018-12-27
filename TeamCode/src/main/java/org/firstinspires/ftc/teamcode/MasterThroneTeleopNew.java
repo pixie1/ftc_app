@@ -86,7 +86,7 @@ public class MasterThroneTeleopNew extends OpMode {
          } else if (gamepad2.right_trigger>0) {
              motorLift.setPower(-.5);
          } else {
-             motorLift.setPower(0); 
+             motorLift.setPower(0);
          }
 
          if (gamepad2.a){

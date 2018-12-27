@@ -9,14 +9,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "testServoCR", group="testPrograms")
 public class testServoCR extends OpMode {
 
-    CRServo intakeLift;
+    CRServo intake;
 
 
     @Override
     public void init() {
 
-        intakeLift = hardwareMap.crservo.get("intakeLift");
-        intakeLift.setDirection(DcMotorSimple.Direction.FORWARD);
+        intake = hardwareMap.crservo.get("intake");
+        intake.setDirection(DcMotorSimple.Direction.FORWARD);
         //rightSide.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
@@ -25,9 +25,11 @@ public class testServoCR extends OpMode {
     public void loop() {
 
         if(gamepad2.x){
-            intakeLift.setPower(-0.5);
-        } else{
-          intakeLift.setPower(0);
+            intake.setPower(-0.5);
+        } if (gamepad2.y) {
+            intake.setPower(0.5);
+        } else {
+          intake.setPower(0);
         }
 
     }
