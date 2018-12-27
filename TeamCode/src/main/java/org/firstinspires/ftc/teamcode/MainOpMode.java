@@ -31,11 +31,12 @@ public class MainOpMode extends LinearOpMode {
     DcMotor motorBackRight;
     DcMotor motorBackLeft;
     DcMotor motorLift;
+    DcMotor motorIntake;
 //    DcMotor motorExtend;
     DcMotor motorIntakeHinge;
-    DcMotor motorIntake;
 
     CRServo hook;
+
 
     BNO055IMU imu;
    // DigitalChannel digitalTouch;
@@ -77,9 +78,9 @@ public class MainOpMode extends LinearOpMode {
         motorLift = hardwareMap.dcMotor.get("motorLift");
 //        motorExtend = hardwareMap.dcMotor.get("motorExtend");
         motorIntakeHinge = hardwareMap.dcMotor.get("motorIntakeHinge");
-        motorIntake = hardwareMap.dcMotor.get("motorIntake");
+        motorIntake = hardwareMap.dcMotor.get("intake");
 
-        hook = hardwareMap.crservo.get("hook");
+         hook = hardwareMap.crservo.get("hook");
 
         imu=hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);

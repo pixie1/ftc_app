@@ -86,9 +86,9 @@ public class SamplingOrderDetector extends DogeCVDetector {
 
     @Override
     public Mat process(Mat input) {
-
-        Rect rectCrop = new Rect(topLeft, bottomRight);
-        input = input.submat(rectCrop);
+//
+//        Rect rectCrop = new Rect(topLeft, bottomRight);
+//        input = input.submat(rectCrop);
 
         inputSize = input.size();
 
@@ -147,6 +147,9 @@ public class SamplingOrderDetector extends DogeCVDetector {
             double w = rect.width;
             double h = rect.height;
             Point centerPoint = new Point(x + ( w/2), y + (h/2));
+            if (rect.y > CROP_HEIGHT_TOP || rect.y < CROP_HEIGHT_BOTTOM){
+                area = 0;
+            }
             if( area > 500){
                 Imgproc.circle(workingMat,centerPoint,3,new Scalar(0,255,255),3);
                 Imgproc.putText(workingMat,"Area: " + area,centerPoint,0,0.5,new Scalar(0,255,255));
