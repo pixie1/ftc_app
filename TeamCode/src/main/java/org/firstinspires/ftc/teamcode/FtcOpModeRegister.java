@@ -11,7 +11,7 @@ public class  FtcOpModeRegister implements OpModeRegister {
     manager.register("testMotor", testMotor.class);
     manager.register("testSensor", testSensor.class);
     manager.register("ForwardTest", ForwardTest.class);
-    manager.register("TeleOpSimple", TeleOpSimple.class );
+    manager.register("TeleOpForDemo", TeleOpForDemo.class );
     manager.register("ColorCalibrate", ColorCalibrate.class);
     manager.register("mainAutonomous", MainOpMode.class);
   }

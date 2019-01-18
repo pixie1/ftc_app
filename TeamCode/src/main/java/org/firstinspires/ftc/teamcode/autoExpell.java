@@ -9,13 +9,9 @@ public class autoExpell extends MainOpMode {
         try{
             initAll();
             expellTeamMarker();
+            sleep(1000);
         }finally {
             stopEverything();
         }
-    }
-    public void expellTeamMarker(){
-        motorIntakeHinge.setPower(-0.75);
-        sleep(5000);
-        motorIntakeHinge.setPower(0);
     }
 }

@@ -36,6 +36,7 @@ public class MainOpMode extends LinearOpMode {
     DcMotor motorIntakeHinge;
 
     CRServo hook;
+    Servo markerWhacker;
 
 
     BNO055IMU imu;
@@ -44,18 +45,19 @@ public class MainOpMode extends LinearOpMode {
     public Telemetry telemetry;
 
     double a = 0;
-    private SamplingOrderDetector detector;
+    protected SamplingOrderDetector detector;
 
     //EncoderUtilVars
     ElapsedTime lineLookTime = new ElapsedTime();
     final int ENCODER_TICKS_NEVEREST = 1120; //for Neverest 40
     final double INCH_TO_CM = 2.54;
-    final int WHEEL_DIAMETER = 4 *2; //in inches
-    final double SPEED=0.1;
-    final double SLOW_SPEED=.05;
-    final double TURN_SPEED=.05;
+    final int WHEEL_DIAMETER = 4; //in inches
+    final int REDUCTION= 32/24;
+    final double SPEED=0.4;
+    final double SLOW_SPEED=.3;
+    final double TURN_SPEED=.4 ;
     //VarsDone
-    final int TURN_ANGLE = 30;
+    final int TURN_ANGLE = 40;
 
     public MainOpMode() {
     }
@@ -78,22 +80,24 @@ public class MainOpMode extends LinearOpMode {
         motorLift = hardwareMap.dcMotor.get("motorLift");
 //        motorExtend = hardwareMap.dcMotor.get("motorExtend");
         motorIntakeHinge = hardwareMap.dcMotor.get("motorIntakeHinge");
-        motorIntake = hardwareMap.dcMotor.get("intake");
+        motorIntake = hardwareMap.dcMotor.get("motorIntake");
 
-         hook = hardwareMap.crservo.get("hook");
+        hook = hardwareMap.crservo.get("hook");
+        markerWhacker = hardwareMap.servo.get("markerWhacker");
 
         imu=hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorIntakeHinge.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorIntakeHinge.setPower(0);
+        markerWhacker.setPosition(0);
         telemetry.addData("Status", "DogeCV 2018.0 - Sampling Order Example");
 
         detector = new SamplingOrderDetector();
@@ -144,7 +148,7 @@ public class MainOpMode extends LinearOpMode {
     }
 
     public int cmToEncoderTicks(double cm) {
-        double d = INCH_TO_CM * WHEEL_DIAMETER;
+        double d = INCH_TO_CM * WHEEL_DIAMETER * REDUCTION;
         double rotationConstant = d * Math.PI;
         Double doubleEncoderTicks = (cm * (1 / rotationConstant)) * ENCODER_TICKS_NEVEREST;
         return doubleEncoderTicks.intValue();
@@ -167,22 +171,24 @@ public class MainOpMode extends LinearOpMode {
     }
 
     public void forward(double disInCm, double speed) {
-        int current = motorFrontRight.getCurrentPosition();
+        int startingPosition = motorFrontRight.getCurrentPosition();
         int disInEncoderTicks = cmToEncoderTicks(disInCm);
-        telemetry.addData("currentEncoderValue", current);
+        telemetry.addData("currentEncoderValue", startingPosition);
         telemetry.addData("disInEncoderTicks", disInEncoderTicks);
         telemetry.update();
         motorFrontLeft.setPower(speed);
         motorFrontRight.setPower(speed);
         motorBackLeft.setPower(speed);
         motorBackRight.setPower(speed);
-        while (opModeIsActive() && Math.abs(Math.abs(motorFrontRight.getCurrentPosition()) - Math.abs(current)) < Math.abs(disInEncoderTicks)) {
+        while (opModeIsActive() && Math.abs(Math.abs(motorFrontRight.getCurrentPosition()) - Math.abs(startingPosition)) < Math.abs(disInEncoderTicks)) {
             telemetry.  addData("Centimeters:", disInCm);
             telemetry.addData("Encoder Ticks:", disInEncoderTicks);
             telemetry.addData("Left Encoder at:", motorFrontLeft.getCurrentPosition());
             telemetry.addData("Right Encoder at:", motorFrontRight.getCurrentPosition());
             telemetry.addData("Back Left Encoder at:", motorBackLeft.getCurrentPosition());
             telemetry.addData("Back Right Encoder at:", motorBackRight.getCurrentPosition());
+            telemetry.addData("currentEncoderValue", startingPosition);
+            telemetry.addData("disInEncoderTicks", disInEncoderTicks);
             telemetry.update();
 
         }
@@ -218,15 +224,15 @@ public class MainOpMode extends LinearOpMode {
 
         while (opModeIsActive() && (current > (targetHeading+0.5) || current < (targetHeading-0.5))) {
             if (current > targetHeading) {
-//                if (Math.abs(current-targetHeading)<15)
-//                    speed=0.15;
+                if (Math.abs(current-targetHeading)<15)
+                    speed=SLOW_SPEED;
                 motorBackLeft.setPower(speed);
                 motorBackRight.setPower(-speed);
                 motorFrontLeft.setPower(speed);
                 motorFrontRight.setPower(-speed);
             } else if (current < targetHeading) {
-//                if (Math.abs(current-targetHeading)<15)
-//                    speed=0.10;
+                if (Math.abs(current-targetHeading)<15)
+                    speed=SLOW_SPEED;
                 motorBackLeft.setPower(-speed);
                 motorBackRight.setPower(speed);
                 motorFrontLeft.setPower(-speed);
@@ -318,13 +324,15 @@ public class MainOpMode extends LinearOpMode {
     public void attackMineral(SamplingOrderDetector.GoldLocation goldLocation){
         forward (5, SPEED);
         if (goldLocation == SamplingOrderDetector.GoldLocation.LEFT){
-            turnGyroPrecise(TURN_ANGLE,TURN_SPEED);
-            forward(45,SLOW_SPEED);
+            turnGyroPrecise(TURN_ANGLE,SPEED);
+            forward(45,SPEED);
+            forward(15, SPEED);
         } else if (goldLocation == SamplingOrderDetector.GoldLocation.RIGHT){
-            turnGyroPrecise(-TURN_ANGLE,TURN_SPEED);
-            forward(45,SLOW_SPEED);
+            turnGyroPrecise(-TURN_ANGLE,SPEED);
+            forward(50,SPEED);
+            forward(30, SPEED);
         } else {
-            goldLocation=SamplingOrderDetector.GoldLocation.CENTER;
+           // goldLocation=SamplingOrderDetector.GoldLocation.CENTER;
             forward(45,SPEED);
         }
 
@@ -335,22 +343,28 @@ public class MainOpMode extends LinearOpMode {
         if (goldLocation==SamplingOrderDetector.GoldLocation.CENTER){
 //            forward(1,SPEED);
         } else if (goldLocation == SamplingOrderDetector.GoldLocation.LEFT) {
-            turnGyroPrecise(-TURN_ANGLE, TURN_SPEED);
+            turnGyroPrecise(-45, TURN_SPEED);
+            forward(40, SPEED);
         } else if (goldLocation == SamplingOrderDetector.GoldLocation.RIGHT){
-            turnGyroPrecise(TURN_ANGLE, TURN_SPEED);
+            turnGyroPrecise(45, TURN_SPEED);
+            forward(40, SPEED);
         }
-        forward(10, SLOW_SPEED);
+        forward(10, SPEED);
     }
 
-    public void intoCrater(){
+    public void intoCrater(SamplingOrderDetector.GoldLocation location){
+        if (location==SamplingOrderDetector.GoldLocation.LEFT){
+            forward(110, SPEED);
+        } else {
+            forward(140, SPEED);
+        }
         motorIntakeHinge.setPower(.5);
         sleep(1000);
         motorIntakeHinge.setPower(0);
     }
     public void expellTeamMarker(){
-        motorIntakeHinge.setPower(-.75);
-        sleep(5000);
-        motorIntakeHinge.setPower(0);
+        markerWhacker.setPosition(1);
+        //markerWhacker.setPosition(0);
     }
 
     @Override
