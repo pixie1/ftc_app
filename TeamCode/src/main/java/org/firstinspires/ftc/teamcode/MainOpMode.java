@@ -5,14 +5,12 @@ import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.SamplingOrderDetector;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -21,7 +19,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryImpl;
 
 public class MainOpMode extends LinearOpMode {
@@ -38,9 +35,7 @@ public class MainOpMode extends LinearOpMode {
     CRServo hook;
     Servo markerWhacker;
 
-
     BNO055IMU imu;
-   // DigitalChannel digitalTouch;
     ColorSensor colorSensor;
     public Telemetry telemetry;
 
@@ -110,7 +105,6 @@ public class MainOpMode extends LinearOpMode {
         detector.areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA
         //detector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
         detector.maxAreaScorer.weight = 0.001;
-
         detector.ratioScorer.weight = 15;
         detector.ratioScorer.perfectRatio = 1.0;
 
@@ -139,7 +133,6 @@ public class MainOpMode extends LinearOpMode {
         waitForStart();
 
     }
-
 
 
     public float getAngleFromIMU(){
@@ -335,13 +328,12 @@ public class MainOpMode extends LinearOpMode {
            // goldLocation=SamplingOrderDetector.GoldLocation.CENTER;
             forward(45,SPEED);
         }
-
     }
 
     public void driveToCorner(SamplingOrderDetector.GoldLocation goldLocation){
 
         if (goldLocation==SamplingOrderDetector.GoldLocation.CENTER){
-//            forward(1,SPEED);
+            forward(40,SPEED);
         } else if (goldLocation == SamplingOrderDetector.GoldLocation.LEFT) {
             turnGyroPrecise(-45, TURN_SPEED);
             forward(40, SPEED);
@@ -352,12 +344,9 @@ public class MainOpMode extends LinearOpMode {
         forward(10, SPEED);
     }
 
-    public void intoCrater(SamplingOrderDetector.GoldLocation location){
-        if (location==SamplingOrderDetector.GoldLocation.LEFT){
-            forward(110, SPEED);
-        } else {
-            forward(140, SPEED);
-        }
+
+
+    public void intoCrater(){
         motorIntakeHinge.setPower(.5);
         sleep(1000);
         motorIntakeHinge.setPower(0);

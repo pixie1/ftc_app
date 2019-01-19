@@ -14,16 +14,11 @@ public class AutoDepotLeftAutoTest extends AutoTest{
            attackMineral(SamplingOrderDetector.GoldLocation.LEFT);
          super.driveToCorner(SamplingOrderDetector.GoldLocation.LEFT);
         expellTeamMarker();
-         //   forward(20,SPEED);
 
-            sleep (2000);
 
           turnToPark(SamplingOrderDetector.GoldLocation.LEFT);
 
-            sleep (1000);
-           forward(140, SPEED);
-            sleep (1000);
-           intoCrater(SamplingOrderDetector.GoldLocation.LEFT);
+           intoCrater();
         }finally {
             stopEverything();
         }

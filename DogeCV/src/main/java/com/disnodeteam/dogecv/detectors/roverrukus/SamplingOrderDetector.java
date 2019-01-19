@@ -25,10 +25,6 @@ import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Victo on 9/10/2018.
- */
-
 public class SamplingOrderDetector extends DogeCVDetector {
 
     public enum GoldLocation {
@@ -57,11 +53,9 @@ public class SamplingOrderDetector extends DogeCVDetector {
     private boolean      isFound      = false;
 
     private Mat workingMat  = new Mat();
-    private Mat blurredMat  = new Mat();
     private Mat yellowMask  = new Mat();
     private Mat whiteMask   = new Mat();
     private Mat hiarchy     = new Mat();
-    private Mat structure   = new Mat();
 
     public Rect gold;
     public List<Rect> silver;
@@ -86,9 +80,6 @@ public class SamplingOrderDetector extends DogeCVDetector {
 
     @Override
     public Mat process(Mat input) {
-//
-//        Rect rectCrop = new Rect(topLeft, bottomRight);
-//        input = input.submat(rectCrop);
 
         inputSize = input.size();
 
@@ -98,10 +89,8 @@ public class SamplingOrderDetector extends DogeCVDetector {
         input.copyTo(workingMat);
         input.release();
 
-
         yellowFilter.process(workingMat.clone(),yellowMask);
         whiteFilter.process(workingMat.clone(), whiteMask);
-
 
         List<MatOfPoint> contoursYellow = new ArrayList<>();
         List<MatOfPoint> contoursWhite = new ArrayList<>();
@@ -159,21 +148,16 @@ public class SamplingOrderDetector extends DogeCVDetector {
         List<Rect>   choosenWhiteRect  = new ArrayList<>();
         List<Double> chosenWhiteScore  = new ArrayList<>();;
 
-
-
         for(MatOfPoint c : contoursWhite){
             MatOfPoint2f contour2f = new MatOfPoint2f(c.toArray());
 
             //Processing on mMOP2f1 which is in type MatOfPoint2f
             double approxDistance = Imgproc.arcLength(contour2f, true) * 0.02;
             Imgproc.approxPolyDP(contour2f, approxCurve, approxDistance, true);
-
             //Convert back to MatOfPoint
             MatOfPoint points = new MatOfPoint(approxCurve.toArray());
-
             // Get bounding rect of contour
             Rect rect = Imgproc.boundingRect(points);
-
             double diffrenceScore = calculateScore(points);
 
             double area = Imgproc.contourArea(c);
@@ -202,8 +186,6 @@ public class SamplingOrderDetector extends DogeCVDetector {
                     chosenWhiteScore.add(diffrenceScore);
                 }
             }
-
-
         }
 
         gold= chosenYellowRect;

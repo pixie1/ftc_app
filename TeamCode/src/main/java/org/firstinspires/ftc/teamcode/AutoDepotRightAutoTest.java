@@ -22,7 +22,7 @@ public class AutoDepotRightAutoTest extends AutoTest{
 
             sleep (1000);
 
-           intoCrater(SamplingOrderDetector.GoldLocation.RIGHT);
+           intoCrater();
         }finally {
             stopEverything();
         }
