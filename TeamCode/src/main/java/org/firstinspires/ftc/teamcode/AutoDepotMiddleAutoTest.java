@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryImpl;
 
-@Autonomous
+@Autonomous(name = "autoDepoMiddleTest", group="testPrograms")
 public class AutoDepotMiddleAutoTest extends AutoTest{
 
     public void runOpMode(){

@@ -16,7 +16,7 @@ public class MasterThroneTeleopNew extends OpMode {
     DcMotor motorBackRight;
     DcMotor motorBackLeft;
     DcMotor motorLift;
-    //    DcMotor motorExtend;
+    DcMotor motorExtend;
     DcMotor motorIntakeHinge;
     DcMotor motorIntake;
     CRServo hook;
@@ -38,7 +38,7 @@ public class MasterThroneTeleopNew extends OpMode {
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //        motorExtend = hardwareMap.dcMotor.get("motorExtend");
+        motorExtend = hardwareMap.dcMotor.get("motorExtend");
         motorIntakeHinge = hardwareMap.dcMotor.get("motorIntakeHinge");
         motorIntake = hardwareMap.dcMotor.get("motorIntake");
 
@@ -80,7 +80,7 @@ public class MasterThroneTeleopNew extends OpMode {
         if (gamepad2.right_bumper) {
             motorLift.setPower(.75);
         } else if (gamepad2.right_trigger > 0) {
-            motorLift.setPower(-.5);
+            motorLift.setPower(-.75);
         } else {
             motorLift.setPower(0);
         }
@@ -107,6 +107,14 @@ public class MasterThroneTeleopNew extends OpMode {
             motorIntakeHinge.setPower(-.75);
         } else {
             motorIntakeHinge.setPower(0);
+        }
+
+        if (gamepad2.dpad_up){
+            motorExtend.setPower(.5);
+        } else if (gamepad2.dpad_down){
+            motorExtend.setPower(-.25);
+        } else {
+            motorExtend.setPower(0);
         }
     }
 }

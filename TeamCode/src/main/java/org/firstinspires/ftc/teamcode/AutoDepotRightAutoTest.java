@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.disnodeteam.dogecv.detectors.roverrukus.SamplingOrderDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous
+@Autonomous(name = "autoDepoRightTest", group="testPrograms")
 public class AutoDepotRightAutoTest extends AutoTest{
 
     public void runOpMode(){

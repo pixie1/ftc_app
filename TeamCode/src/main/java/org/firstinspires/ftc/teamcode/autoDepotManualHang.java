@@ -4,7 +4,7 @@ import com.disnodeteam.dogecv.detectors.roverrukus.SamplingOrderDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous
-public class autoDepot extends MainOpMode {
+public class autoDepotManualHang extends AutoTest {
 
     public void runOpMode() {
         try {

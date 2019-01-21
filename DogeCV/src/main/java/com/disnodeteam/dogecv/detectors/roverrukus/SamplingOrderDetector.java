@@ -28,13 +28,13 @@ import java.util.List;
 public class SamplingOrderDetector extends DogeCVDetector {
 
     public enum GoldLocation {
-        UNKNOWN,
+        UNKNOWN,        
         LEFT,
         CENTER,
         RIGHT
     }
 
-    private final int CROP_HEIGHT_TOP= 230;
+    private final int CROP_HEIGHT_TOP= 200;
     private final int CROP_HEIGHT_BOTTOM=0;
     private final int CROP_LENGTH= 480;
     public DogeCV.AreaScoringMethod areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA;
@@ -166,6 +166,9 @@ public class SamplingOrderDetector extends DogeCVDetector {
             double w = rect.width;
             double h = rect.height;
             Point centerPoint = new Point(x + ( w/2), y + (h/2));
+            if (rect.y > CROP_HEIGHT_TOP || rect.y < CROP_HEIGHT_BOTTOM){
+                area = 0;
+            }
             if( area > 1000){
                 Imgproc.circle(workingMat,centerPoint,3,new Scalar(0,255,255),3);
                 Imgproc.putText(workingMat,"Area: " + area,centerPoint,0,0.5,new Scalar(0,255,255));
@@ -227,7 +230,7 @@ public class SamplingOrderDetector extends DogeCVDetector {
             int leftCount = 0;
             for(int i=0;i<choosenWhiteRect.size();i++){
                 Rect rect = choosenWhiteRect.get(i);
-                if(chosenYellowRect.x > rect.x){
+                if(chosenYellowRect.x < rect.x){
                     leftCount++;
                 }
             }

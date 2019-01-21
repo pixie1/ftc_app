@@ -114,15 +114,8 @@ public class MainOpMode extends LinearOpMode {
         while (a == 0){
             if (gamepad2.a){
                 hook.setPower(.5);
-            } else {
+                sleep(3000);
                 hook.setPower(0);
-            }
-            if (gamepad2.b){
-                motorLift.setPower(.75);
-            } else {
-                motorLift.setPower(0);
-            }
-            if (gamepad2.x){
                 a++;
             }
         }
@@ -292,14 +285,14 @@ public class MainOpMode extends LinearOpMode {
     }
 
     public void lowerRobot(){
-        motorLift.setPower(-.75);
+        motorLift.setPower(.75);
         sleep(4500);
         motorLift.setPower(0);
         backward(2,SPEED);
         hook.setPower(-.5);
         sleep(3000);
         hook.setPower(0);
-        turnGyroPrecise(0,.05);
+        //turnGyroPrecise(0,.05);
     }
 
     public SamplingOrderDetector.GoldLocation findGold(){
@@ -315,19 +308,7 @@ public class MainOpMode extends LinearOpMode {
     }
 
     public void attackMineral(SamplingOrderDetector.GoldLocation goldLocation){
-        forward (5, SPEED);
-        if (goldLocation == SamplingOrderDetector.GoldLocation.LEFT){
-            turnGyroPrecise(TURN_ANGLE,SPEED);
-            forward(45,SPEED);
-            forward(15, SPEED);
-        } else if (goldLocation == SamplingOrderDetector.GoldLocation.RIGHT){
-            turnGyroPrecise(-TURN_ANGLE,SPEED);
-            forward(50,SPEED);
-            forward(30, SPEED);
-        } else {
-           // goldLocation=SamplingOrderDetector.GoldLocation.CENTER;
-            forward(45,SPEED);
-        }
+
     }
 
     public void driveToCorner(SamplingOrderDetector.GoldLocation goldLocation){
