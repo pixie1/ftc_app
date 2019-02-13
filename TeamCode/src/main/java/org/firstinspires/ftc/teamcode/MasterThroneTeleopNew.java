@@ -20,6 +20,11 @@ public class MasterThroneTeleopNew extends OpMode {
     DcMotor motorIntakeHinge;
     DcMotor motorIntake;
     CRServo hook;
+    CRServo charlieBucket;
+    Servo landerPusher;
+    Servo intakeBlock;
+    //DigitalChannel hangSpot;
+    DigitalChannel limitSwitchForExtending;
 
     public MasterThroneTeleopNew() {
     }
@@ -33,6 +38,11 @@ public class MasterThroneTeleopNew extends OpMode {
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         motorLift = hardwareMap.dcMotor.get("motorLift");
         hook = hardwareMap.crservo.get("hook");
+        charlieBucket = hardwareMap.crservo.get("charlieBucket");
+        landerPusher = hardwareMap.servo.get("landerPusher");
+        intakeBlock = hardwareMap.servo.get("intakeBlock");
+        //hangSpot = hardwareMap.digitalChannel.get("hangSpot");
+        limitSwitchForExtending = hardwareMap.digitalChannel.get("limitSwitchForExtending");
 
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -43,6 +53,7 @@ public class MasterThroneTeleopNew extends OpMode {
         motorIntake = hardwareMap.dcMotor.get("motorIntake");
 
         motorIntakeHinge.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //hangSpot.setMode(DigitalChannel.Mode.INPUT);
 
         hook.setPower(0);
     }
@@ -51,6 +62,9 @@ public class MasterThroneTeleopNew extends OpMode {
     double m;
     double leftValue;
     double rightValue;
+    double lift;
+    boolean button2;
+    boolean button= false;
 
     @Override
     public void loop() {
@@ -76,27 +90,37 @@ public class MasterThroneTeleopNew extends OpMode {
         motorFrontLeft.setPower(Math.min(m, 0.75));
         motorBackLeft.setPower(Math.min(m, 0.75));
 
+        lift = gamepad2.right_stick_y;
+        motorLift.setPower(lift);
+
 
         if (gamepad2.right_bumper) {
-            motorLift.setPower(.75);
-        } else if (gamepad2.right_trigger > 0) {
-            motorLift.setPower(-.75);
-        } else {
-            motorLift.setPower(0);
+            intakeBlock.setPosition(0);
+        }
+        if (gamepad2.right_trigger > 0) {
+            intakeBlock.setPosition(1);
         }
 
-        if (gamepad2.a) {
+        if (gamepad2.dpad_left) {
             hook.setPower(.5);
-        } else if (gamepad2.b) {
+        } else if (gamepad2.dpad_right) {
             hook.setPower(-.5);
         } else {
             hook.setPower(0);
         }
 
+        if (gamepad2.a) {
+            charlieBucket.setPower(.5);
+        } else if (gamepad2.b) {
+            charlieBucket.setPower(-.5);
+        } else {
+            charlieBucket .setPower(0);
+        }
+
         if (gamepad2.x) {
-            motorIntake.setPower(1);
+            motorIntake.setPower(.75);
         } else if (gamepad2.y) {
-            motorIntake.setPower(-1);
+            motorIntake.setPower(-.5);
         } else {
             motorIntake.setPower(0);
         }
@@ -109,12 +133,45 @@ public class MasterThroneTeleopNew extends OpMode {
             motorIntakeHinge.setPower(0);
         }
 
-        if (gamepad2.dpad_up){
+        if (gamepad2.dpad_up) {
             motorExtend.setPower(.5);
-        } else if (gamepad2.dpad_down){
+        } else if (gamepad2.dpad_down ) {
             motorExtend.setPower(-.25);
         } else {
             motorExtend.setPower(0);
         }
+
+
+//        if (gamepad1.a){
+//           if (hangSpot.getState()== false){
+//               motorLift.setPower(.75);
+//           } else{
+//               motorLift.setPower(0);
+//           }
+//        }
+        if (gamepad1.b) {
+            if (button == false) {
+                button = true;
+                motorFrontRight.setPower(.5);
+                motorBackRight.setPower(.5);
+                motorFrontLeft.setPower(-.5);
+                motorBackLeft.setPower(-.5);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Thread.currentThread().interrupt();
+                }
+                landerPusher.setPosition(0);
+                motorFrontRight.setPower(0);
+                motorBackRight.setPower(0);
+                motorFrontLeft.setPower(0);
+                motorBackLeft.setPower(0);
+            }
+        } else {
+            button = false;
+        }
+
+
     }
 }

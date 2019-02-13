@@ -50,7 +50,7 @@ public class SamplingOrderExample extends OpMode
     public void init() {
         telemetry.addData("Status", "DogeCV 2018.0 - Sampling Order Example");
 
-        detector = new SamplingOrderDetector();
+        detector = new SamplingOrderDetector(telemetry);
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
         detector.useDefaults();
 

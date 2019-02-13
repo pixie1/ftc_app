@@ -12,6 +12,7 @@ import com.disnodeteam.dogecv.scoring.MaxAreaScorer;
 import com.disnodeteam.dogecv.scoring.PerfectAreaScorer;
 import com.disnodeteam.dogecv.scoring.RatioScorer;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -28,7 +29,7 @@ import java.util.List;
 public class SamplingOrderDetector extends DogeCVDetector {
 
     public enum GoldLocation {
-        UNKNOWN,        
+        UNKNOWN,
         LEFT,
         CENTER,
         RIGHT
@@ -73,9 +74,16 @@ public class SamplingOrderDetector extends DogeCVDetector {
     Point topLeft = new Point(leftX, topY); // declaring crop rectangle points
     Point bottomRight = new Point(rightX, bottomY);
 
+    Telemetry telemetry;
+
     public SamplingOrderDetector() {
         super();
         this.detectorName = "Sampling Order Detector";
+    }
+    public SamplingOrderDetector(Telemetry telemetry) {
+        super();
+        this.detectorName = "Sampling Order Detector";
+        this.telemetry=telemetry;
     }
 
     @Override
@@ -166,9 +174,14 @@ public class SamplingOrderDetector extends DogeCVDetector {
             double w = rect.width;
             double h = rect.height;
             Point centerPoint = new Point(x + ( w/2), y + (h/2));
+
+            telemetry.addData("Area:",area);
+            telemetry.update();
+
             if (rect.y > CROP_HEIGHT_TOP || rect.y < CROP_HEIGHT_BOTTOM){
                 area = 0;
             }
+
             if( area > 1000){
                 Imgproc.circle(workingMat,centerPoint,3,new Scalar(0,255,255),3);
                 Imgproc.putText(workingMat,"Area: " + area,centerPoint,0,0.5,new Scalar(0,255,255));
@@ -255,9 +268,14 @@ public class SamplingOrderDetector extends DogeCVDetector {
             lastOrder = currentOrder;
 
         } else if (chosenYellowRect == null) {
-            currentOrder = SamplingOrderDetector.GoldLocation.RIGHT;
-            isFound = true;
-            lastOrder = currentOrder;
+            if(choosenWhiteRect.size()>0) {
+                currentOrder = SamplingOrderDetector.GoldLocation.RIGHT;
+                isFound = true;
+                lastOrder = currentOrder;
+            } else {
+                currentOrder = GoldLocation.UNKNOWN;
+                isFound = false;
+            }
 
         }else{
             currentOrder = SamplingOrderDetector.GoldLocation.UNKNOWN;

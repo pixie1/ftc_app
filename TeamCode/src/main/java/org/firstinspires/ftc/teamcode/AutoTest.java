@@ -52,7 +52,7 @@ public class AutoTest extends MainOpMode {
         markerWhacker.setPosition(0);
         telemetry.addData("Status", "DogeCV 2018.0 - Sampling Order Example");
 
-        detector = new SamplingOrderDetector();
+        detector = new SamplingOrderDetector(telemetry);
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
         detector.useDefaults();
 

@@ -17,6 +17,7 @@ public class autoDepot extends MainOpMode {
             turnToPark(goldLocation);
             goToCrater(goldLocation);
             intoCrater();
+            finish();
         } finally {
             stopEverything();
         }

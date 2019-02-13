@@ -21,6 +21,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryImpl;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class MainOpMode extends LinearOpMode {
 
     DcMotor motorFrontRight;
@@ -34,6 +37,7 @@ public class MainOpMode extends LinearOpMode {
 
     CRServo hook;
     Servo markerWhacker;
+    Servo landerPusher;
 
     BNO055IMU imu;
     ColorSensor colorSensor;
@@ -292,16 +296,54 @@ public class MainOpMode extends LinearOpMode {
         hook.setPower(-.5);
         sleep(3000);
         hook.setPower(0);
+        landerPusher.setPosition(1);
         //turnGyroPrecise(0,.05);
     }
 
     public SamplingOrderDetector.GoldLocation findGold(){
+        SamplingOrderDetector.GoldLocation goldLocation;
+        List<SamplingOrderDetector.GoldLocation> locations= new LinkedList<>();
       detector.enable();
-      sleep(2000);
-      SamplingOrderDetector.GoldLocation goldLocation = detector.getLastOrder();
+      sleep(500);
+      for (int i=0; i<100; i++){
+          SamplingOrderDetector.GoldLocation readlocation = detector.getLastOrder();
+          telemetry.addData("location", readlocation.toString());
+          telemetry.update();
+          sleep(10);
+          locations.add(readlocation);
+
+      }
+
       detector.disable();
+      int positionLeftCount=0;
+      int positionCenterCount=0;
+      int positionRightCount=0;
+
+      for(SamplingOrderDetector.GoldLocation location: locations){
+          if (location==SamplingOrderDetector.GoldLocation.LEFT) {
+              positionLeftCount++;
+          }
+          if (location== SamplingOrderDetector.GoldLocation.RIGHT){
+              positionRightCount++;
+          }
+          if (location== SamplingOrderDetector.GoldLocation.CENTER){
+              positionCenterCount++;
+          }
+      }
+
+      if (positionLeftCount>positionCenterCount && positionLeftCount>positionRightCount){
+          goldLocation= SamplingOrderDetector.GoldLocation.LEFT;
+      } else if (positionCenterCount>positionRightCount && positionCenterCount>positionLeftCount){
+          goldLocation= SamplingOrderDetector.GoldLocation.CENTER;
+      } else {
+          goldLocation= SamplingOrderDetector.GoldLocation.RIGHT;
+      }
+
       sleep(1000);
         telemetry.addData("location", goldLocation.toString());
+        telemetry.addData("right Count", positionRightCount);
+        telemetry.addData("left Count", positionLeftCount);
+        telemetry.addData("center count", positionCenterCount);
         telemetry.update();
 
         return goldLocation;
@@ -325,12 +367,14 @@ public class MainOpMode extends LinearOpMode {
         forward(10, SPEED);
     }
 
-
-
-    public void intoCrater(){
+    public void intoCrater() {
         motorIntakeHinge.setPower(.5);
         sleep(1000);
         motorIntakeHinge.setPower(0);
+    }
+    public void finish(){
+        markerWhacker.setPosition(0);
+        landerPusher.setPosition(0);
     }
     public void expellTeamMarker(){
         markerWhacker.setPosition(1);
