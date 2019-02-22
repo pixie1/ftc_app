@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 @Autonomous
 public class autoDepot extends MainOpMode {
 
+
+
     public void runOpMode() {
         try {
             initAll();
@@ -41,13 +43,13 @@ public class autoDepot extends MainOpMode {
 
     public void turnToPark(SamplingOrderDetector.GoldLocation goldLocation){
         if (goldLocation == SamplingOrderDetector.GoldLocation.LEFT){
-            turnGyroPrecise(170-45, SPEED);
+            turnGyroPrecise(125, SPEED);
         } else if (goldLocation == SamplingOrderDetector.GoldLocation.RIGHT){
             turnGyroPrecise(90, SPEED);
             forward(30,SPEED);
-            turnGyroPrecise(180-45,SPEED);
+            turnGyroPrecise(135,SPEED);
         } else {
-            turnGyroPrecise(170-45, SPEED);
+            turnGyroPrecise(125, SPEED);
         }
     }
     public void goToCrater(SamplingOrderDetector.GoldLocation location){

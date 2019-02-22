@@ -5,6 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name = "autoCraterLeftTest", group="testPrograms")
 public class autoCraterLeftTest extends AutoTest {
+
+    public autoCraterLeftTest(){
+        SPEED=0.5;
+
+    }
     public void runOpMode() {
         try {
             initAll();
@@ -30,7 +35,7 @@ public class autoCraterLeftTest extends AutoTest {
         forward (5, SPEED);
         if (goldLocation == SamplingOrderDetector.GoldLocation.LEFT){
             turnGyroPrecise(TURN_ANGLE,SPEED);
-            forward(45,SPEED);
+            forward(52,SPEED);
         } else if (goldLocation == SamplingOrderDetector.GoldLocation.RIGHT){
             turnGyroPrecise(-TURN_ANGLE,SPEED);
             forward(50,SPEED);
@@ -40,19 +45,24 @@ public class autoCraterLeftTest extends AutoTest {
         }
     }
     public void returnToCrater(){
-        backward(70, SPEED);
-        turnGyroPrecise(-45, SPEED);
-        forward(150, SPEED);
+        sleep(1000);
+        backward(130, SPEED);
+//        turnGyroPrecise(-45, SPEED);
+//        forward(10, SPEED);
     }
     public void goToDepo(SamplingOrderDetector.GoldLocation goldLocation){
         if (goldLocation == SamplingOrderDetector.GoldLocation.RIGHT){
-            forward(90, SPEED);
+            forward(100, SPEED);
         } else if (goldLocation == SamplingOrderDetector.GoldLocation.CENTER){
-            forward(90, SPEED);
+            forward(95, SPEED);
         } else {
-            forward(80, SPEED);
+            forward(87, SPEED);
         }
         turnGyroPrecise(180-45, SPEED);
-        forward(0, SPEED);
+        if (goldLocation== SamplingOrderDetector.GoldLocation.LEFT){
+            forward(70, SPEED);
+        } else
+            forward(50, SPEED);
+
     }
 }

@@ -30,12 +30,13 @@ public class AutoTest extends MainOpMode {
         motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         motorLift = hardwareMap.dcMotor.get("motorLift");
-//        motorExtend = hardwareMap.dcMotor.get("motorExtend");
+        motorExtend = hardwareMap.dcMotor.get("motorExtend");
         motorIntakeHinge = hardwareMap.dcMotor.get("motorIntakeHinge");
         motorIntake = hardwareMap.dcMotor.get("motorIntake");
 
         hook = hardwareMap.crservo.get("hook");
         markerWhacker = hardwareMap.servo.get("markerWhacker");
+        landerPusher = hardwareMap.servo.get("landerPusher");
 
         imu=hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
@@ -48,11 +49,13 @@ public class AutoTest extends MainOpMode {
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorIntakeHinge.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorIntakeHinge.setPower(0);
+        motorExtend.setPower(0);
         markerWhacker.setPosition(0);
         telemetry.addData("Status", "DogeCV 2018.0 - Sampling Order Example");
 
-        detector = new SamplingOrderDetector(telemetry);
+        detector = new SamplingOrderDetector();
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
         detector.useDefaults();
 
@@ -60,27 +63,18 @@ public class AutoTest extends MainOpMode {
 
         // Optional Tuning
         detector.areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA
-        //detector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
         detector.maxAreaScorer.weight = 0.001;
-
         detector.ratioScorer.weight = 15;
         detector.ratioScorer.perfectRatio = 1.0;
 
-//        telemetry.addData("Do hanging adjustments now","0");
-//        telemetry.update();
+        telemetry.addData("Do hanging adjustments now","0");
+        telemetry.update();
 //
 //        while (a == 0){
 //            if (gamepad2.a){
 //                hook.setPower(.5);
-//            } else {
+//                sleep(3000);
 //                hook.setPower(0);
-//            }
-//            if (gamepad2.b){
-//                motorLift.setPower(.75);
-//            } else {
-//                motorLift.setPower(0);
-//            }
-//            if (gamepad2.x){
 //                a++;
 //            }
 //        }
@@ -89,7 +83,6 @@ public class AutoTest extends MainOpMode {
         telemetry.update();
 
         waitForStart();
-
     }
 
     public void turnToPark(SamplingOrderDetector.GoldLocation goldLocation){

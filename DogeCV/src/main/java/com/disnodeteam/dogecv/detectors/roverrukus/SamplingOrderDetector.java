@@ -43,8 +43,6 @@ public class SamplingOrderDetector extends DogeCVDetector {
     public RatioScorer ratioScorer = new RatioScorer(1.0,5);
     public MaxAreaScorer maxAreaScorer = new MaxAreaScorer(0.01);
     public PerfectAreaScorer perfectAreaScorer = new PerfectAreaScorer(5000,0.05);
-
-
     public DogeCVColorFilter yellowFilter = new LeviColorFilter(LeviColorFilter.ColorPreset.YELLOW,75  );
     public DogeCVColorFilter whiteFilter  = new HSVRangeFilter(new Scalar(0,0,200), new Scalar(50,40,255));
 
@@ -61,19 +59,7 @@ public class SamplingOrderDetector extends DogeCVDetector {
     public Rect gold;
     public List<Rect> silver;
 
-    private Size stretchKernal = new Size(10,10);
-    private Size newSize = new Size();
-
     protected Size inputSize;
-
-    int topY = CROP_HEIGHT_TOP; //these are the cropping point values
-    int leftX = 0; //combine a top/bottom with a left/right and you got a point
-    int bottomY = CROP_HEIGHT_BOTTOM;
-    int rightX = CROP_LENGTH;
-
-    Point topLeft = new Point(leftX, topY); // declaring crop rectangle points
-    Point bottomRight = new Point(rightX, bottomY);
-
     Telemetry telemetry;
 
     public SamplingOrderDetector() {
@@ -131,10 +117,10 @@ public class SamplingOrderDetector extends DogeCVDetector {
             // Get bounding rect of contour
             Rect rect = Imgproc.boundingRect(points);
 
-            double diffrenceScore = calculateScore(points);
+            double differenceScore = calculateScore(points);
 
-            if(diffrenceScore < chosenYellowScore && diffrenceScore < maxDiffrence ){
-                chosenYellowScore = diffrenceScore;
+            if(differenceScore < chosenYellowScore && differenceScore < maxDiffrence ){
+                chosenYellowScore = differenceScore;
                 chosenYellowRect = rect;
             }
 
@@ -175,8 +161,8 @@ public class SamplingOrderDetector extends DogeCVDetector {
             double h = rect.height;
             Point centerPoint = new Point(x + ( w/2), y + (h/2));
 
-            telemetry.addData("Area:",area);
-            telemetry.update();
+//            telemetry.addData("Area:",area);
+//            telemetry.update();
 
             if (rect.y > CROP_HEIGHT_TOP || rect.y < CROP_HEIGHT_BOTTOM){
                 area = 0;
@@ -250,11 +236,9 @@ public class SamplingOrderDetector extends DogeCVDetector {
             if(leftCount == 0){
                 currentOrder = SamplingOrderDetector.GoldLocation.LEFT;
             }
-
             if(leftCount >= 1 ){
                 currentOrder = SamplingOrderDetector.GoldLocation.CENTER;
             }
-
             isFound = true;
             lastOrder = currentOrder;
 
@@ -276,7 +260,6 @@ public class SamplingOrderDetector extends DogeCVDetector {
                 currentOrder = GoldLocation.UNKNOWN;
                 isFound = false;
             }
-
         }else{
             currentOrder = SamplingOrderDetector.GoldLocation.UNKNOWN;
             isFound = false;

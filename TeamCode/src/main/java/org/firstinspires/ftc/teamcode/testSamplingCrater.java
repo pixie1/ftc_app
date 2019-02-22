@@ -25,13 +25,13 @@ public class testSamplingCrater extends AutoTest {
 
 //            attackMineral(goldLocation);
 //            //turnGyroPrecise(0,SPEED);
-//            bacUpAndTurn();
+//            backUpAndTurn();
 //            goToDepo(goldLocation);
 //            expellTeamMarker();
 //            returnToCrater();
 //            intoCrater();
         } finally {
-            stopEverything();
+         //   stopEverything();
         }
     }
 

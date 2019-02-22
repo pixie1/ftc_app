@@ -13,6 +13,7 @@ public class encoderTest extends OpMode {
     DcMotor motorFrontLeft;
     DcMotor motorBackRight;
     DcMotor motorBackLeft;
+    DcMotor motorExtend;
 
     public encoderTest(){
     }
@@ -24,17 +25,20 @@ public class encoderTest extends OpMode {
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
         motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
+        motorExtend = hardwareMap.dcMotor.get("motorExtend");
 
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     double FL;
     double FR;
     double BL;
     double BR;
+
 
     @Override
     public void loop() {
@@ -58,6 +62,11 @@ public class encoderTest extends OpMode {
         } else {
             motorBackRight.setPower(0);
         }
+        if (gamepad2.dpad_up){
+            motorExtend.setPower(.5);
+        } else {
+            motorExtend.setPower(0);
+        }
 
 //        motorFrontRight.setPower(Math.min(FR,1));
 //        motorBackRight.setPower(Math.min(BR,1));
@@ -68,5 +77,8 @@ public class encoderTest extends OpMode {
         telemetry.addData("motorFrontLeft Encoder", motorFrontLeft.getCurrentPosition());
         telemetry.addData("motorBackRight Encoder", motorBackRight.getCurrentPosition());
         telemetry.addData("motorBackLeft Encoder", motorBackLeft.getCurrentPosition());
+        telemetry.addData("motorExtend Encoder:", motorExtend.getCurrentPosition());
+        telemetry.update();
+
     }
 }
